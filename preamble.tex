@@ -1,0 +1,118 @@
+\documentclass[a4,11pt]{book}
+\usepackage{color}
+
+\newenvironment{texdocp}{}{\mbox{}\newline\mbox{}\newline{}}
+% Environment for packages
+\newenvironment{texdocpackage}[1]{%
+	\newpage{}\gdef\packagename{#1}\chapter{\bf Package #1}
+	\vskip -.25in
+	\rule{\hsize}{.7mm}
+}{}
+
+% Environment for classes, interfaces
+% Argument 1: "class" or "interface"
+% Argument 2: the name of the class/interface
+\newenvironment{texdocclass}[2]{%
+	\gdef\classname{#2}
+	\section{{\bf {\sc #1} #2}}
+}{}
+
+% Environment for class description
+\newenvironment{texdocclassintro}{
+	\subsection*{Beschreibung}
+}{
+}
+
+% Environment around class fields
+\newenvironment{texdocclassfields}{%
+	\subsection*{Attribute}
+	\begin{itemize}
+}{%
+	\end{itemize}
+}
+
+% Environment around class methods
+\newenvironment{texdocclassmethods}{%
+	\subsection*{Methoden}
+	\begin{itemize}
+}{%
+	\end{itemize}
+}
+
+% Environment around class Constructors
+\newenvironment{texdocclassconstructors}{%
+	\subsection*{Konstruktoren}
+	\begin{itemize}
+}{%
+	\end{itemize}
+}
+
+% Formats a single field
+%  Argument 1: modifier
+%  Argument 2: type
+%  Argument 3: name
+%  Argument 4: Documentation text
+\newcommand{\texdocfield}[4]{\item {\tt #2 #3} #4}
+
+% Formats a single method
+%  Argument 1: name
+%  Argument 2: full declaration
+%  Argument 3: Documentation text
+\newcommand{\texdocmethod}[3]{\item {\tt #2} #3}
+
+% Formats a single constructor
+%  Argument 1: name
+%  Argument 2: full declaration
+%  Argument 3: Documentation text
+\newcommand{\texdocconstructor}[3]{\item {\tt #2} #3}
+
+% Formating elements
+\newcommand{\texdocbr}{\mbox{}\newline{}}
+\def\bl{\mbox{}\newline\mbox{}\newline{}}
+
+\newcommand{\isep}[0]{%
+\setlength{\itemsep}{-.4ex}
+}
+\newcommand{\sld}[0]{%
+\setlength{\topsep}{0em}
+\setlength{\partopsep}{0em}
+\setlength{\parskip}{0em}
+\setlength{\parsep}{-1em}
+}
+\newcommand{\headref}[3]{%
+\ifthenelse{#1 = 1}{%
+\addcontentsline{toc}{section}{\hspace{\qquad}\protect\numberline{}{#3}}%
+}{}%
+\ifthenelse{#1 = 2}{%
+\addcontentsline{toc}{subsection}{\hspace{\qquad}\protect\numerline{}{#3}}%
+}{}%
+\ifthenelse{#1 = 3}{%
+\addcontentsline{toc}{subsubsection}{\hspace{\qquad}\protect\numerline{}{#3}}%
+}{}%
+\label{#3}%
+\makebox[\textwidth][l]{#2 #3}%
+}%
+\newcommand{\membername}[1]{{\it #1}\linebreak}
+\newcommand{\divideents}[1]{\vskip -1em\indent\rule{2in}{.5mm}}
+\newcommand{\refdefined}[1]{
+\expandafter\ifx\csname r@#1\endcsname\relax
+\relax\else
+{$($ in \ref{#1}, page \pageref{#1}$)$}
+\fi}
+\date{\today}
+\pagestyle{myheadings}
+\def\packagename{}
+\def\classname{}
+\addtocontents{toc}{\protect\def\protect\packagename{}}
+\addtocontents{toc}{\protect\def\protect\classname{}}
+\markboth{\protect\packagename -- \protect\classname}{\protect\packagename -- \protect\classname}
+\chardef\bslash=`\\
+
+\begin{document}
+
+	\sloppy
+	\raggedright
+	\tableofcontents
+	\input{docs.tex}
+
+\end{document}
