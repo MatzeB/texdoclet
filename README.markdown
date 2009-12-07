@@ -20,7 +20,9 @@ Usage
 
 1. Produce the latex documentation by calling the doclet. Usually this works
    like this on the commandline:
+
 	javadoc -docletpath texdoclet.jar -doclet org.wonderly.doclets.TexDoclet my.cool.package
+
    This should produce a file docs.tex
 2. You may test the generated output by copying preamble.tex into the current
    directory and compiling it with pdflatex (preamble.tex includes docs.tex)
