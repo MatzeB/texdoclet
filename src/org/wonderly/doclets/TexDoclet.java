@@ -253,10 +253,10 @@ public class TexDoclet extends Doclet {
 	/**
 	 * reconstructs a java representation of a DocLet Method/Constructor
 	 * 
-	 * @param class member whose prefix is returns
+	 * @param class member whose prefix is returned \\ \\
 	 * @return the prefix (modifiers+type)
 	 */
-	public static String getDeclarationPrefix(ExecutableMemberDoc member) {
+	private static String getDeclarationPrefix(ExecutableMemberDoc member) {
 		StringBuilder res = new StringBuilder();
 		if (!member.modifiers().equals("")) {
 			res.append(member.modifiers());

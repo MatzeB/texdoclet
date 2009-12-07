@@ -1,6 +1,28 @@
+% This is an example preamble for texdoclet generated output.
+% Used like this it produces a standalone document. However it should be easy
+% to copy these definitions into your own document and use \input{docs.tex}
+% where you want your texdoc documentation.
+
+% The following is an example to put packagename and class into the page
+% headings.
 \documentclass[a4,11pt]{book}
+
+\pagestyle{myheadings}
+% Initially we're not in a package or class
+\def\packagename{}
+\def\classname{}
+% Custom page heading which displays packagename and class
+\markboth{\protect\packagename{} -- \protect\classname{}}{\protect\packagename{} -- \protect\classname{}}
+
+% ---------------------------------------------------------------------------
+% TexDoc macros start - everything below this point should be copied to your
+% own document and adapted to your style/language if needed
+% ---------------------------------------------------------------------------
+
+% You need to have the color package loaded
 \usepackage{color}
 
+% Environment used to simulate html <p> </p>
 \newenvironment{texdocp}{}{\mbox{}\newline\mbox{}\newline{}}
 % Environment for packages
 \newenvironment{texdocpackage}[1]{%
@@ -87,16 +109,10 @@
 %  Argument 2: description text
 \newcommand{\texdocparameter}[2]{{\tt\bf#1} & #2 \\}
 
-% Formating elements
+% Used to simulate html <br/>
 \newcommand{\texdocbr}{\mbox{}\newline{}}
-\def\bl{\mbox{}\newline\mbox{}\newline{}}
 
-\newcommand{\sld}[0]{%
-\setlength{\topsep}{0em}
-\setlength{\partopsep}{0em}
-\setlength{\parskip}{0em}
-\setlength{\parsep}{-1em}
-}
+% Used to simulate html <h[1-9]> - </h[1-9]>
 \newcommand{\headref}[3]{%
 \ifthenelse{#1 = 1}{%
 \addcontentsline{toc}{section}{\hspace{\qquad}\protect\numberline{}{#3}}%
@@ -109,27 +125,20 @@
 }{}%
 \label{#3}%
 \makebox[\textwidth][l]{#2 #3}%
-}%
-\newcommand{\membername}[1]{{\it #1}\linebreak}
-\newcommand{\divideents}[1]{\vskip -1em\indent\rule{2in}{.5mm}}
+}
+
 \newcommand{\refdefined}[1]{
 \expandafter\ifx\csname r@#1\endcsname\relax
 \relax\else
 {$($ in \ref{#1}, page \pageref{#1}$)$}
 \fi}
-\date{\today}
-\pagestyle{myheadings}
-\def\packagename{}
-\def\classname{}
-\addtocontents{toc}{\protect\def\protect\packagename{}}
-\addtocontents{toc}{\protect\def\protect\classname{}}
-\markboth{\protect\packagename -- \protect\classname}{\protect\packagename -- \protect\classname}
-\chardef\bslash=`\\
+
+% ---------------------------------------------------------------------------
+% TexDoc macros end
+% ---------------------------------------------------------------------------
 
 \begin{document}
 
-	\sloppy
-	\raggedright
 	\tableofcontents
 	\input{docs.tex}
 

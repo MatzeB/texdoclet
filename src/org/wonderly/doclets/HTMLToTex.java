@@ -464,7 +464,7 @@ public class HTMLToTex {
 						ret.append(" ");
 				} else {
 					if( (pos+1) < str.length() && str.charAt(pos+1) == 10 ) {
-						ret.append("\\bl ");
+						ret.append("\\texdocbr ");
 						++pos;
 					} else {
 						if( verbat > 0 )
@@ -518,7 +518,7 @@ public class HTMLToTex {
 				ret.append("\\textgreater ");
 				break;
 			case '\\':
-				ret.append("\\bslash ");
+				ret.append("$\\backslash$");
 				break;
 			default:
 				ret.append( (char)c );
