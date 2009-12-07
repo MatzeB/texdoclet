@@ -24,8 +24,10 @@ Usage
 	javadoc -docletpath texdoclet.jar -doclet org.wonderly.doclets.TexDoclet my.cool.package
 
    This should produce a file docs.tex
+
 2. You may test the generated output by copying preamble.tex into the current
    directory and compiling it with pdflatex (preamble.tex includes docs.tex)
+
 3. Copy the definitions inside preamble.tex into the preamble of your own latex
    document. Adapt the macros to your style and language needs.
    Use \input{docs.tex} inside your document to include the generated
