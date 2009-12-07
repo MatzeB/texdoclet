@@ -15,7 +15,7 @@
 \newenvironment{texdocclass}[2]{%
 	\gdef\classname{#2}
 	\section{{\bf {\sc #1} #2}}
-}{}
+}{\pagebreak}
 
 % Environment for class description
 \newenvironment{texdocclassintro}{
@@ -52,27 +52,45 @@
 %  Argument 2: type
 %  Argument 3: name
 %  Argument 4: Documentation text
-\newcommand{\texdocfield}[4]{\item {\tt #2 #3} #4}
+\newcommand{\texdocfield}[4]{\item {\tt #1#2 {\bf#3}} \\ #4}
 
 % Formats a single method
-%  Argument 1: name
-%  Argument 2: full declaration
-%  Argument 3: Documentation text
-\newcommand{\texdocmethod}[3]{\item {\tt #2} #3}
+%  Argument 1: declaration before name
+%  Argument 2: name
+%  Argument 3: part after name (parameters)
+%  Argument 4: Documentation text
+%  Argument 5: Documentation of parameters/exceptions/return values
+\newcommand{\texdocmethod}[5]{\item {\tt #1 {\bf#2}#3} \\ #4#5}
 
 % Formats a single constructor
+%  Argument 1: declaration before name
+%  Argument 2: name
+%  Argument 3: part after name (parameters)
+%  Argument 4: Documentation text
+%  Argument 5: Documentation of parameters/exceptions/return values
+\newcommand{\texdocconstructor}[5]{\item {\tt #1 {\bf#2}#3} \\ #4#5}
+
+% Environment around \texdocparameter invocations
+\newenvironment{texdocparameters}{%
+\mbox{}\\ Parameters: \\
+	\begin{tabular}{ll}
+}{%
+	\end{tabular}
+}
+
+\newcommand{\texdocreturn}[1]{
+\mbox{}\\ Returns: #1}
+
+% Formats a parameter (this gets put inside the input of a \texdocmethod or 
+% \texdocconstructor macro)
 %  Argument 1: name
-%  Argument 2: full declaration
-%  Argument 3: Documentation text
-\newcommand{\texdocconstructor}[3]{\item {\tt #2} #3}
+%  Argument 2: description text
+\newcommand{\texdocparameter}[2]{{\tt\bf#1} & #2 \\}
 
 % Formating elements
 \newcommand{\texdocbr}{\mbox{}\newline{}}
 \def\bl{\mbox{}\newline\mbox{}\newline{}}
 
-\newcommand{\isep}[0]{%
-\setlength{\itemsep}{-.4ex}
-}
 \newcommand{\sld}[0]{%
 \setlength{\topsep}{0em}
 \setlength{\partopsep}{0em}

@@ -9,6 +9,33 @@ import java.util.Stack;
 /**
  * Replace html/javadoc specific tags with latex commands.
  * Escapes special tex characters.
+ * 
+ * Supported HTML tags include the following
+ * <dl>
+ * <dt>&lt;dl&gt;
+ * <dd>with the associated &lt;dt&gt;&lt;dd&gt;&lt;/dl&gt; tags
+ * <dt>&lt;p&gt;
+ * <dd>but not align=center...yet
+ * <dt>&lt;br&gt;
+ * <dd>but not clear=xxx
+ * <dt>&lt;table&gt;
+ * <dd>including all the associcated &lt;td&gt;&lt;th&gt;&lt;tr&gt;&lt;/td&gt;&lt;/th&gt;&lt;/tr&gt;
+ * <dt>&lt;ol&gt;
+ * <dd>ordered lists
+ * <dt>&lt;ul&gt;
+ * <dd>unordered lists
+ * <dt>&lt;font&gt;
+ * <dd>font coloring
+ * <dt>&lt;pre&gt;
+ * <dd>preformatted text
+ * <dt>&lt;code&gt;
+ * <dd>fixed point fonts
+ * <dt>&lt;i&gt;
+ * <dd>italized fonts
+ * <dt>&lt;b&gt;
+ * <dd>bold fonts
+ * </dl>
+ * 
  */
 public class HTMLToTex {
 	

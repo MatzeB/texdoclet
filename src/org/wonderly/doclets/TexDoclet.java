@@ -11,55 +11,35 @@ import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.Doclet;
 import com.sun.javadoc.ExecutableMemberDoc;
 import com.sun.javadoc.FieldDoc;
+import com.sun.javadoc.LanguageVersion;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.PackageDoc;
+import com.sun.javadoc.ParamTag;
 import com.sun.javadoc.Parameter;
 import com.sun.javadoc.ParameterizedType;
 import com.sun.javadoc.RootDoc;
+import com.sun.javadoc.Tag;
 import com.sun.javadoc.Type;
 
 /**
  *  Note: This version is heavily modified by Matthias Braun<matthias.braun@kit.edu>
  * 
  *  This class provides a Java 2, <code>javadoc</code> Doclet which generates
- *  a LaTeX2e document out of the java classes that it is used on.  This is
- *  convienent for creating printable documentation complete with cross reference
- *  information.
- *  <p>
- *  Supported HTML tags within comments include the following
- *  <dl>
- *  <dt>&lt;dl&gt;
- *  <dd>with the associated &lt;dt&gt;&lt;dd&gt;&lt;/dl&gt; tags
- *  <dt>&lt;p&gt;
- *  <dd>but not align=center...yet
- *  <dt>&lt;br&gt;
- *  <dd>but not clear=xxx
- *  <dt>&lt;table&gt;
- *  <dd>including all the associcated &lt;td&gt;&lt;th&gt;&lt;tr&gt;&lt;/td&gt;&lt;/th&gt;&lt;/tr&gt;
- *  <dt>&lt;ol&gt;
- *  <dd>ordered lists
- *  <dt>&lt;ul&gt;
- *  <dd>unordered lists
- *  <dt>&lt;font&gt;
- *  <dd>font coloring
- *  <dt>&lt;pre&gt;
- *  <dd>preformatted text
- *  <dt>&lt;code&gt;
- *  <dd>fixed point fonts
- *  <dt>&lt;i&gt;
- *  <dd>italized fonts
- *  <dt>&lt;b&gt;
- *  <dd>bold fonts
- *	</dl>
+ *  a LaTeX2e document out of the java classes that it is used on.
+ *  
+ *  It converts commonly used html tags to equivalent latex constructs (see HTMLToTex for details)
+ *  Not working yet:
+ *    - type parameters for class/interface/methods are not printed yet
+ *    - only a subset of the javadoc tags are handled (param and return mostly)
  *
  * {@link #TexDoclet TexDoclet}
  * {@link #start(RootDoc) start}
- *  @version 1.1
  *  @author <a href="mailto:gregg.wonderly@pobox.com">Gregg Wonderly</a>
+ *  @author <a href="mailto:matthias.braun@kit.edu">Matthias Braun</a>
  */
 public class TexDoclet extends Doclet {
 	/** Writer for writing to output file */
-	public static PrintWriter os = null;
+	private static PrintWriter os = null;
 	private static String outfile = "docs.tex";
 	
 	/**
@@ -69,20 +49,20 @@ public class TexDoclet extends Doclet {
 	 *  @param option the option to check
 	 */
 	public static int optionLength(String option) {
-		if( option.equals("-output") )
+		if (option.equals("-output") )
 			return 2;
-		else if( option.equals("-classfilter") )
+		else if (option.equals("-classfilter") )
 			return 2;
-		else if( option.equals("-help") ) {
-			System.err.println( "TexDoclet Usage:");
-			System.err.println( "-output <outfile>     Specifies the output file to write to.  If none");
-			System.err.println( "                      specified, the default is docs.tex in the current");
-			System.err.println( "                      directory." );
+		else if (option.equals("-help") ) {
+			System.err.println("TexDoclet Usage:");
+			System.err.println("-output <outfile>     Specifies the output file to write to.  If none");
+			System.err.println("                      specified, the default is docs.tex in the current");
+			System.err.println("                      directory." );
 
 			return 1;
 		}
 		
-		System.out.println( "unknown option "+option);
+		System.out.println("unknown option " + option);
 		return Doclet.optionLength(option);
 	}
 	
@@ -92,14 +72,19 @@ public class TexDoclet extends Doclet {
 	 *  @param args the arguments to check
 	 *  @param err the interface to use for reporting errors
 	 */
-	static public boolean validOptions( String[][] args, DocErrorReporter err ) {
-		for( int i = 0; i < args.length; ++i ) {
-			if( args[i][0].equals( "-output" ) ) {
+	static public boolean validOptions(String[][] args, DocErrorReporter err ) {
+		for (int i = 0; i < args.length; ++i ) {
+			if (args[i][0].equals( "-output" ) ) {
 				outfile = args[i][1];
 			}
 		}
 		return true;
-	}	
+	}
+	
+	/** indicate that we can handle (most) 1.5 language features */
+	static public LanguageVersion languageVersion() {
+		return LanguageVersion.JAVA_1_5;
+	}
 	
 	/**
 	 *  Called by the framework to format the entire document
@@ -107,9 +92,9 @@ public class TexDoclet extends Doclet {
 	 *  @param root the root of the starting document
 	 */
 	public static boolean start(RootDoc root) {
-		System.out.println("TexDoclet v3.0, Copyright 2003 - Gregg Wonderly.");
+		System.out.println("TexDoclet 4.0, Copyright 2009 - Matthias Braun");
+		System.out.println("based on TexDoclet v3.0, Copyright 2003 - Gregg Wonderly.");
 		System.out.println("http://texdoclet.dev.java.net - on the World Wide Web.");
-		System.out.println("heavily modified by Matthias Braun<matthias.braun@kit.edu>");
 		
 		try {
 			os = new PrintWriter(new FileWriter(outfile));
@@ -117,7 +102,7 @@ public class TexDoclet extends Doclet {
 				System.err.println("Can not create output file, processing aborted");
 				System.exit(1);
 			}			
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
 	
@@ -229,31 +214,70 @@ public class TexDoclet extends Doclet {
 
 		for (ExecutableMemberDoc member : members) {
 			os.print("\\texdoc" + type);
+			os.print("{" + HTMLToTex.convert(getDeclarationPrefix(member)) + "}");
 			os.print("{" + HTMLToTex.convert(member.name()) + "}");
-			os.print("{" + HTMLToTex.convert(getFullDeclaration(member)) + "}");
+			os.print("{" + HTMLToTex.convert(getDeclarationPostfix(member)) + "}");
 			os.print("{" + HTMLToTex.convert(member.commentText()) + "}");
+			os.print("{");
+			printParameterDocumentation(member);
+			os.print("}");
+			os.println("");
+		}
+	}
+	
+	private static void printParameterDocumentation(ExecutableMemberDoc member) {
+		/* handle @param tags */
+		ParamTag[] tags = member.paramTags();
+		if (tags.length > 0) {
+			os.println("\\begin{texdocparameters}");
+			for (ParamTag tag : member.paramTags()) {
+				os.print("\\texdocparameter{" + HTMLToTex.convert(tag.parameterName()) + "}");
+				os.print("{" + HTMLToTex.convert(tag.parameterComment()) + "}");
+				os.println("");
+			}
+			os.println("\\end{texdocparameters}");
+		}
+		
+		/* handle @return tag */
+		Tag[] returnTags = member.tags("return");
+		if (returnTags.length > 0) {
+			os.print("\\texdocreturn{");
+			for (Tag returnTag : returnTags) {
+				os.print(HTMLToTex.convert(returnTag.text()));
+			}
+			os.print("}");
 			os.println("");
 		}
 	}
 	
 	/**
-	 * reconstructs a java representation of a DocLet Method/Constructor 
+	 * reconstructs a java representation of a DocLet Method/Constructor
+	 * 
+	 * @param class member whose prefix is returns
+	 * @return the prefix (modifiers+type)
 	 */
-	private static String getFullDeclaration(ExecutableMemberDoc med) {
+	public static String getDeclarationPrefix(ExecutableMemberDoc member) {
 		StringBuilder res = new StringBuilder();
-		if (! med.modifiers().equals("")) {
-			res.append(med.modifiers());
-			res.append(" ");
+		if (!member.modifiers().equals("")) {
+			res.append(member.modifiers());
 		}
-		if (med instanceof MethodDoc) {
-			MethodDoc method = (MethodDoc) med;
+		if (member instanceof MethodDoc) {
+			if (res.length() > 0) {
+				res.append(' ');
+			}
+			MethodDoc method = (MethodDoc) member;
 			res.append(typeToString(method.returnType()));
-			res.append(" ");
 		}
-		res.append(med.name());
+		
+		return res.toString();
+	}
+	
+	private static String getDeclarationPostfix(ExecutableMemberDoc member) {
+		StringBuilder res = new StringBuilder();
+		
 		res.append("(");
 		String separator = "";
-		for (Parameter param : med.parameters()) {
+		for (Parameter param : member.parameters()) {
 			res.append(separator);
 			res.append(typeToString(param.type()));
 			res.append(" ");
@@ -266,7 +290,7 @@ public class TexDoclet extends Doclet {
 	}	
 	
 	/**
-	 * Converts a DocLet type back to a java syntax
+	 * Converts a DocLet type back to java syntax
 	 */
 	private static String typeToString(Type type) {
 		String tstring;
@@ -274,7 +298,6 @@ public class TexDoclet extends Doclet {
 		if (ptype != null) {
 			tstring = ptype.typeName();
 			tstring += "<";
-			/* Matze: This looks right, but doesn't work for me :-( */
 			for (Type ta : ptype.typeArguments()) {
 				tstring += typeToString(ta);
 			}
