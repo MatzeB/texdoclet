@@ -1,12 +1,11 @@
 TexDoclet
 =========
 
-This is a javadoc doclet - a plugin for the javadoc tool
-(http://java.sun.com/j2se/javadoc/). This doclet produces output suitable to
+This is a javadoc doclet - a plugin for the [javadoc tool](http://java.sun.com/j2se/javadoc/). This doclet produces output suitable to
 be included into LaTeX documents.
-This version is based on TexDoclet at https://texdoclet.dev.java.net/ but alot
-was changed and rewritten to have layout separated from content and having
-cleaner sourcecode.
+This version is based on [TexDoclet](https://texdoclet.dev.java.net/) with big
+parts of the code rewritten and changed to support a separation from content
+and layout. The sourcecode is also cleaner than the original.
 
 Features
 --------
