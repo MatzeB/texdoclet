@@ -231,9 +231,13 @@ public class TexDoclet extends Doclet {
 
 		for (ExecutableMemberDoc member : members) {
 			os.print("\\texdoc" + type);
-			os.print("{" + HTMLToTex.convert(getDeclarationPrefix(member)) + "}");
+			os.print("{" + HTMLToTex.convert(member.modifiers()) + "}");
+			if (member instanceof MethodDoc) {
+				MethodDoc methodDoc = (MethodDoc) member;
+				os.print("{" + HTMLToTex.convert(typeToString(methodDoc.returnType())) + "}");
+			}
 			os.print("{" + HTMLToTex.convert(member.name()) + "}");
-			os.print("{" + HTMLToTex.convert(getDeclarationPostfix(member)) + "}");
+			os.print("{" + HTMLToTex.convert(formatParameters(member)) + "}");
 			os.print("{" + HTMLToTex.convert(member.commentText()) + "}");
 			os.print("{");
 			printParameterDocumentation(member);
@@ -267,29 +271,7 @@ public class TexDoclet extends Doclet {
 		}
 	}
 
-	/**
-	 * reconstructs a java representation of a DocLet Method/Constructor
-	 * 
-	 * @param class member whose prefix is returned
-	 * @return the prefix (modifiers+type)
-	 */
-	private static String getDeclarationPrefix(ExecutableMemberDoc member) {
-		StringBuilder res = new StringBuilder();
-		if (!member.modifiers().equals("")) {
-			res.append(member.modifiers());
-		}
-		if (member instanceof MethodDoc) {
-			if (res.length() > 0) {
-				res.append(' ');
-			}
-			MethodDoc method = (MethodDoc) member;
-			res.append(typeToString(method.returnType()));
-		}
-
-		return res.toString();
-	}
-
-	private static String getDeclarationPostfix(ExecutableMemberDoc member) {
+	private static String formatParameters(ExecutableMemberDoc member) {
 		StringBuilder res = new StringBuilder();
 
 		res.append("(");

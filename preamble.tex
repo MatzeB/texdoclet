@@ -36,7 +36,7 @@
 % Argument 2: the name of the class/interface
 \newenvironment{texdocclass}[2]{%
 	\gdef\classname{#2}
-	\section{{\bf {\sc #1} #2}}
+	\section{{\tt #1} {\bf #2}}
 }{\pagebreak}
 
 % Environment for class description
@@ -70,22 +70,23 @@
 }
 
 % Formats a single field
-%  Argument 1: modifier
+%  Argument 1: modifiers
 %  Argument 2: type
 %  Argument 3: name
 %  Argument 4: Documentation text
-\newcommand{\texdocfield}[4]{\item {\tt #1#2 {\bf#3}} \\ #4}
+\newcommand{\texdocfield}[4]{\item {\tt #1 #2 {\bf#3}} \\ #4}
 
 % Formats a single method
-%  Argument 1: declaration before name
-%  Argument 2: name
-%  Argument 3: part after name (parameters)
-%  Argument 4: Documentation text
-%  Argument 5: Documentation of parameters/exceptions/return values
-\newcommand{\texdocmethod}[5]{\item {\tt #1 {\bf#2}#3} \\ #4#5}
+%  Argument 1: modifiers
+%  Argument 2: return type
+%  Argument 3: name
+%  Argument 4: part after name (parameters)
+%  Argument 5: Documentation text
+%  Argument 6: Documentation of parameters/exceptions/return values
+\newcommand{\texdocmethod}[6]{\item {\tt #1 #2 {\bf#3}#4} \\ #5#6}
 
 % Formats a single constructor
-%  Argument 1: declaration before name
+%  Argument 1: modifiers
 %  Argument 2: name
 %  Argument 3: part after name (parameters)
 %  Argument 4: Documentation text
