@@ -5,7 +5,14 @@
 
 % The following is an example to put packagename and class into the page
 % headings.
-\documentclass[a4,11pt]{book}
+\documentclass[a4paper,11pt]{book}
+
+% Make sure you use at least the following macros
+% You should also specify an UTF-8 input encoding to avoid problems with
+% international characters
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 
 \pagestyle{myheadings}
 % Initially we're not in a package or class

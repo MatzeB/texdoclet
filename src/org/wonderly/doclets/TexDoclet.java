@@ -1,7 +1,10 @@
 package org.wonderly.doclets;
 
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -95,6 +98,7 @@ public class TexDoclet extends Doclet {
 	 * 
 	 * @param root
 	 *            the root of the starting document
+	 * @throws FileNotFoundException 
 	 */
 	public static boolean start(RootDoc root) {
 		System.out.println("TexDoclet 4.0, Copyright 2009 - Matthias Braun");
@@ -102,13 +106,12 @@ public class TexDoclet extends Doclet {
 		System.out.println("http://texdoclet.dev.java.net - on the World Wide Web.");
 
 		try {
-			os = new PrintWriter(new FileWriter(outfile));
-			if (os == null) {
-				System.err.println("Can not create output file, processing aborted");
-				System.exit(1);
-			}
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
+			/* Open output file and force an UTF-8 encoding */
+			FileOutputStream bytestream = new FileOutputStream(outfile);
+			OutputStreamWriter charstream = new OutputStreamWriter(bytestream, Charset.forName("UTF-8"));
+			os = new PrintWriter(charstream);
+		} catch (FileNotFoundException fileNotFound) {
+			throw new RuntimeException("Couldn't create output file '" + outfile + "'", fileNotFound);
 		}
 
 		ClassDoc[] classes = root.specifiedClasses();
