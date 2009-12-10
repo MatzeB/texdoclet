@@ -1,0 +1,34 @@
+<project name="TexDoclet" default="build" basedir=".">
+
+	<target name="init">
+		<property name="srcdir"     value="./src"/>
+		<property name="builddir"   value="./bin"/>
+		<property name="releasedir" value="./release"/>
+		<property name="version"    value="0.9.1"/>
+		<property name="jarfile"    value="${releasedir}/texdoclet-${version}.jar"/>
+		<property name="mainclass"  value="org.wondery.doclets.TexDoclet"/>
+	</target>
+
+	<target name="compile" depends="init">
+		<mkdir dir="${builddir}"/>
+		<javac srcdir="${srcdir}" destdir="${builddir}" debug="true" source="1.5" target="1.5">
+		<classpath>
+			<pathelement location="${yJar}"/>
+			<pathelement location="${antlrJar}"/>
+			<pathelement location="${graphmlJar}"/>
+			<pathelement location="${batikJar}"/>
+			<pathelement location="${ysvgJar}"/>
+			<pathelement location="${jgraphJar}"/>
+		</classpath>
+	</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${releasedir}"/>
+		<delete file="${jarfile}"/>
+		<jar jarfile="${jarfile}">
+			<fileset dir="${builddir}"/>
+		</jar>
+	</target>
+
+</project>

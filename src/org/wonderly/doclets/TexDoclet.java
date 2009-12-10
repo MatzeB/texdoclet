@@ -98,7 +98,6 @@ public class TexDoclet extends Doclet {
 	 * 
 	 * @param root
 	 *            the root of the starting document
-	 * @throws FileNotFoundException 
 	 */
 	public static boolean start(RootDoc root) {
 		System.out.println("TexDoclet 4.0, Copyright 2009 - Matthias Braun");

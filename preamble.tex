@@ -7,9 +7,10 @@
 % headings.
 \documentclass[a4paper,11pt]{book}
 
-% Make sure you use at least the following macros
-% You should also specify an UTF-8 input encoding to avoid problems with
-% international characters
+% Make sure you use at least the following packages
+\usepackage{color}
+% The texdoclet output is in UTF-8. I strongly recommend writing the latex
+% source in UTF-8 encoding anyway...
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -25,9 +26,6 @@
 % TexDoc macros start - everything below this point should be copied to your
 % own document and adapted to your style/language if needed
 % ---------------------------------------------------------------------------
-
-% You need to have the color package loaded
-\usepackage{color}
 
 % Environment used to simulate html <p> </p>
 \newenvironment{texdocp}{}{\mbox{}\newline\mbox{}\newline{}}
