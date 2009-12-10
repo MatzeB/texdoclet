@@ -1,6 +1,9 @@
-<project name="TexDoclet" default="build" basedir=".">
+<project name="TexDoclet" default="compile" basedir=".">
 
 	<target name="init">
+		<!-- this is highly system specific unfortunately... -->
+		<property name="toolsjar"   value="/usr/lib/jvm/java-6-sun/lib/tools.jar"/>
+
 		<property name="srcdir"     value="./src"/>
 		<property name="builddir"   value="./bin"/>
 		<property name="releasedir" value="./release"/>
@@ -12,15 +15,10 @@
 	<target name="compile" depends="init">
 		<mkdir dir="${builddir}"/>
 		<javac srcdir="${srcdir}" destdir="${builddir}" debug="true" source="1.5" target="1.5">
-		<classpath>
-			<pathelement location="${yJar}"/>
-			<pathelement location="${antlrJar}"/>
-			<pathelement location="${graphmlJar}"/>
-			<pathelement location="${batikJar}"/>
-			<pathelement location="${ysvgJar}"/>
-			<pathelement location="${jgraphJar}"/>
-		</classpath>
-	</javac>
+			<classpath>
+				<pathelement location="${toolsjar}"/>
+			</classpath>
+		</javac>
 	</target>
 
 	<target name="jar" depends="compile">
