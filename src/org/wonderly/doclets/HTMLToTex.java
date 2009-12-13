@@ -212,55 +212,40 @@ public class HTMLToTex {
 				break;
 			case '<':
 				if (match("<pre>")) {
-					ret.append("{\\tt\n");
+					ret.append("\\texttt{");
 					verbat++;
 				} else if (match("</pre>")) {
 					verbat--;
 					ret.append("}\n");
-				} else if (match("<h1>")) {
-					ret.append("\\headref{1}{\\Huge}{");
-				} else if (match("</h1>")) {
-					ret.append("}\\bl ");
-				} else if (match("<h2>")) {
-					ret.append("\\headref{2}{\\huge}{");
-				} else if (match("</h2>")) {
-					ret.append("}\\bl ");
-				} else if (match("<h3>")) {
-					ret.append("\\headref{3}{\\Large}{");
-				} else if (match("</h3>")) {
-					ret.append("}\\bl ");
-				} else if (match("<h4>")) {
-					ret.append("\\headref{4}{\\normalsize}{");
-				} else if (match("</h4>")) {
-					ret.append("}\\bl ");
-				} else if (match("<h5>")) {
-					ret.append("\\headref{5}{\\small}{");
-				} else if (match("</h5>")) {
-					ret.append("}\\bl ");
-				} else if (match("<h6>")) {
-					ret.append("\\headref{6}{\\footnotesize}{");
-				} else if (match("</h6>")) {
-					ret.append("}\\bl ");
-				} else if (match("<h7>")) {
-					ret.append("\\headref{7}{\\scriptsize}{");
-				} else if (match("</h7>")) {
-					ret.append("}\\bl ");
-				} else if (match("<h8>")) {
-					ret.append("\\headref{8}{\\tiny}{");
-				} else if (match("</h8>")) {
-					ret.append("}\\bl ");
+				} else if (str.length() > pos + 4
+						&& str.substring(pos, pos + 2).equalsIgnoreCase("<h") 
+						&& Character.isDigit(str.substring(pos+2, pos+3).charAt(0))) {
+					String headnum = str.substring(pos+2, pos+3);
+					ret.append(String.format("\\headref{%1$s}{", headnum));
+					enter(String.format("</h%1$s>", headnum), "}\n");
+					pos += 3;
+				} else if (str.length() > pos + 5
+						&& str.substring(pos, pos + 3).equalsIgnoreCase("</h") 
+						&& Character.isDigit(str.substring(pos+3, pos+4).charAt(0))) {
+					String headnum = str.substring(pos+3, pos+4);
+					leave(String.format("</h%1$s>", headnum));
+					pos += 4;
 				} else if (match("<html>")) {
+					enter("</html>", "");
 					/* nothing */
 				} else if (match("</html>")) {
+					leave("</html>");
 					if (chapt > 0) {
 						ret.append("}");
 						--chapt;
 					}
 				} else if (match("<head>")) {
+					enter("<head>", "");
 				} else if (match("</head>")) {
+					leave("</head>");
 				} else if (match("<center>")) {
-					ret.append("\\makebox[\\hsize]{ ");
-					enter("</center>", "}");
+					ret.append("\\begin{center}");
+					enter("</center>", "\\end{center}");
 				} else if (match("</center>")) {
 					leave("</center>");
 				} else if (str.length() > pos + 4
@@ -298,15 +283,14 @@ public class HTMLToTex {
 				} else if (match("</body>")) {
 					/* nothing */
 				} else if (match("<code>")) {
-					ret.append("{\\tt ");
+					ret.append("\\texttt{");
 					enter("</code>", "}");
 				} else if (match("</code>")) {
 					leave("</code>");
 				} else if (match("</br>")) {
 					/* nothing */
-				} else if (match("<br>")) {
+				} else if (match("<br>") || match("<br/>")) {
 					ret.append("\\texdocbr{}\n");
-					pos += 3;
 				} else if (match("</p>")) {
 					leave("</p>");
 				} else if (match("<p>")) {
@@ -324,20 +308,30 @@ public class HTMLToTex {
 							+ (1 * size * .5) + "mm}\\newline\n");
 					pos = idx;
 				} else if (match("<b>")) {
-					ret.append("{\\bf ");
+					ret.append("\\textbf{");
 					enter("</b>", "}");
 				} else if (match("</b>")) {
 					leave("</b>");
 				} else if (match("<i>")) {
-					ret.append("{\\it ");
+					ret.append("\\textit{");
 					enter("</i>", "}");
 				} else if (match("</i>")) {
 					leave("</i>");
 				} else if (match("<strong>")) {
-					ret.append("{\\bf ");
+					ret.append("\\textbf{");
 					enter("</strong>", "}");
 				} else if (match("</strong>")) {
 					leave("</strong>");
+				} else if (match("<em>")) {
+					ret.append("\\textit{");
+					enter("</em>", "}");
+				} else if (match("</em>")) {
+					leave("</em>");
+				} else if (match("<i>")) {
+					ret.append("\\textit{");
+					enter("</i>", "}");
+				} else if (match("</i>")) {
+					leave("</i>");					
 				} else if (match("</img>")) {
 					/* nothing */
 				} else if (str.length() > pos + 4
@@ -417,11 +411,6 @@ public class HTMLToTex {
 					itemcnt = 0;
 					if (itemcnts.isEmpty() == false)
 						itemcnt = itemcnts.pop().intValue();
-				} else if (match("<i>")) {
-					ret.append("{\\it ");
-					enter("</i>", "}");
-				} else if (match("</i>")) {
-					leave("</i>");
 				} else if (match("</table>")) {
 					tblinfo.endTable(ret);
 					tblinfo = tblstk.pop();
@@ -492,7 +481,7 @@ public class HTMLToTex {
 				} else if (match("</font>")) {
 					ret.append("}");
 				} else {
-					ret.append("\\textless ");
+					ret.append("\\textless{}");
 				}
 				break;
 			case '\r':
@@ -555,17 +544,17 @@ public class HTMLToTex {
 					pos += 5;
 				} else if (str.length() > pos + 3
 						&& str.substring(pos, pos + 4).equalsIgnoreCase("&lt;")) {
-					ret.append("\\textless ");
+					ret.append("\\textless{}");
 					pos += 3;
 				} else if (str.length() > pos + 3
 						&& str.substring(pos, pos + 4).equalsIgnoreCase("&gt;")) {
-					ret.append("\\textgreater ");
+					ret.append("\\textgreater{}");
 					pos += 3;
 				} else
 					ret.append("\\&");
 				break;
 			case '>':
-				ret.append("\\textgreater ");
+				ret.append("\\textgreater{}");
 				break;
 			case '\\':
 				ret.append("$\\backslash$");

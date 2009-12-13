@@ -139,7 +139,6 @@ public class TexDoclet extends Doclet {
 
 	private static void printClasses(ClassDoc[] classes) {
 		Arrays.sort(classes, new Comparator<ClassDoc>() {
-			@Override
 			public int compare(ClassDoc o1, ClassDoc o2) {
 				return o1.name().compareToIgnoreCase(o2.name());
 			}
@@ -196,7 +195,6 @@ public class TexDoclet extends Doclet {
 
 		/* sort by name */
 		Arrays.sort(fields, new Comparator<FieldDoc>() {
-			@Override
 			public int compare(FieldDoc o1, FieldDoc o2) {
 				return o1.name().compareToIgnoreCase(o2.name());
 			}
@@ -225,7 +223,6 @@ public class TexDoclet extends Doclet {
 
 		/* sort by name */
 		Arrays.sort(members, new Comparator<ExecutableMemberDoc>() {
-			@Override
 			public int compare(ExecutableMemberDoc o1, ExecutableMemberDoc o2) {
 				return o1.name().compareToIgnoreCase(o2.name());
 			}

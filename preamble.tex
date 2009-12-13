@@ -5,7 +5,7 @@
 
 % The following is an example to put packagename and class into the page
 % headings.
-\documentclass[a4paper,11pt]{book}
+\documentclass[a4paper,11pt,parskip=half]{scrbook}
 
 % Make sure you use at least the following packages
 \usepackage{color}
@@ -14,6 +14,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
+
+% The following packages are not striclty necessary to get texdoclet working
+\usepackage{hyperref}
 
 \pagestyle{myheadings}
 % Initially we're not in a package or class
@@ -28,11 +31,12 @@
 % ---------------------------------------------------------------------------
 
 % Environment used to simulate html <p> </p>
-\newenvironment{texdocp}{}{\mbox{}\newline\mbox{}\newline{}}
+\newenvironment{texdocp}{}{
+
+}
 % Environment for packages
 \newenvironment{texdocpackage}[1]{%
-	\newpage{}\gdef\packagename{#1}\chapter{\bf Package #1}
-	\vskip -.25in
+	\newpage{}\gdef\packagename{#1}\chapter{Package \texttt{#1}}
 	\rule{\hsize}{.7mm}
 }{}
 
@@ -41,8 +45,8 @@
 % Argument 2: the name of the class/interface
 \newenvironment{texdocclass}[2]{%
 	\gdef\classname{#2}
-	\section{{\tt #1} {\bf #2}}
-}{\pagebreak}
+	\section{\texttt{#1 \textbf{#2}}}
+}{\newpage{}}
 
 % Environment for class description
 \newenvironment{texdocclassintro}{
@@ -79,7 +83,7 @@
 %  Argument 2: type
 %  Argument 3: name
 %  Argument 4: Documentation text
-\newcommand{\texdocfield}[4]{\item {\tt #1 #2 {\bf#3}} \\ #4}
+\newcommand{\texdocfield}[4]{\item \texttt{#1 #2 \textbf{#3}} \\ #4}
 
 % Formats a single method
 %  Argument 1: modifiers
@@ -88,7 +92,7 @@
 %  Argument 4: part after name (parameters)
 %  Argument 5: Documentation text
 %  Argument 6: Documentation of parameters/exceptions/return values
-\newcommand{\texdocmethod}[6]{\item {\tt #1 #2 {\bf#3}#4} \\ #5#6}
+\newcommand{\texdocmethod}[6]{\item \texttt{#1 #2 \textbf{#3}#4} \\ #5#6}
 
 % Formats a single constructor
 %  Argument 1: modifiers
@@ -96,42 +100,31 @@
 %  Argument 3: part after name (parameters)
 %  Argument 4: Documentation text
 %  Argument 5: Documentation of parameters/exceptions/return values
-\newcommand{\texdocconstructor}[5]{\item {\tt #1 {\bf#2}#3} \\ #4#5}
+\newcommand{\texdocconstructor}[5]{\item \texttt{#1 \textbf{#2}#3} \\ #4#5}
 
 % Environment around \texdocparameter invocations
 \newenvironment{texdocparameters}{%
-\mbox{}\\ Parameters: \\
+	\minisec{Parameters}
 	\begin{tabular}{ll}
 }{%
 	\end{tabular}
 }
 
-\newcommand{\texdocreturn}[1]{
-\mbox{}\\ Returns: #1}
+\newcommand{\texdocreturn}[1]{\minisec{Returns} #1}
 
 % Formats a parameter (this gets put inside the input of a \texdocmethod or 
 % \texdocconstructor macro)
 %  Argument 1: name
 %  Argument 2: description text
-\newcommand{\texdocparameter}[2]{{\tt\bf#1} & #2 \\}
+\newcommand{\texdocparameter}[2]{\texttt{\textbf{#1}} & \begin{minipage}[t]{0.8\textwidth}#2\end{minipage} \\}
 
 % Used to simulate html <br/>
 \newcommand{\texdocbr}{\mbox{}\newline{}}
 
 % Used to simulate html <h[1-9]> - </h[1-9]>
-\newcommand{\headref}[3]{%
-\ifthenelse{#1 = 1}{%
-\addcontentsline{toc}{section}{\hspace{\qquad}\protect\numberline{}{#3}}%
-}{}%
-\ifthenelse{#1 = 2}{%
-\addcontentsline{toc}{subsection}{\hspace{\qquad}\protect\numerline{}{#3}}%
-}{}%
-\ifthenelse{#1 = 3}{%
-\addcontentsline{toc}{subsubsection}{\hspace{\qquad}\protect\numerline{}{#3}}%
-}{}%
-\label{#3}%
-\makebox[\textwidth][l]{#2 #3}%
-}
+% Argument 1: number of heading (5 for a <h5>)
+% Argument 2: heading text
+\newcommand{\headref}[2]{\minisec{#2}}
 
 \newcommand{\refdefined}[1]{
 \expandafter\ifx\csname r@#1\endcsname\relax
