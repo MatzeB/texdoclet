@@ -12,7 +12,7 @@
 		<property name="mainclass"  value="org.wondery.doclets.TexDoclet"/>
 	</target>
 
-	<target name="compile" depends="init">
+	<target name="compile" depends="init" description="compile sourcefiles">
 		<mkdir dir="${builddir}"/>
 		<javac srcdir="${srcdir}" destdir="${builddir}" debug="true" source="1.5" target="1.5">
 			<classpath>
@@ -21,12 +21,25 @@
 		</javac>
 	</target>
 
-	<target name="jar" depends="compile">
+	<target name="jar" depends="compile" description="prepares a jar file release">
 		<mkdir dir="${releasedir}"/>
 		<delete file="${jarfile}"/>
 		<jar jarfile="${jarfile}">
 			<fileset dir="${builddir}"/>
 		</jar>
+	</target>
+	
+	<target name="selftest" depends="compile" description="tests texdoclet on its own sources">
+		<exec executable="javadoc">
+			<arg value="-docletpath"/>
+			<arg value="bin"/>
+			<arg value="-doclet"/>
+			<arg value="org.wonderly.doclets.TexDoclet"/>
+			<arg value="-sourcepath"/>
+			<arg value="src"/>
+			<arg value="org.wonderly.doclets"/>
+			<arg value="org.wonderly.doclets.test"/>
+		</exec>
 	</target>
 
 </project>
