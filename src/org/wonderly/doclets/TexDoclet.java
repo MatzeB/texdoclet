@@ -25,8 +25,7 @@ import com.sun.javadoc.Tag;
 import com.sun.javadoc.Type;
 
 /**
- * Note: This version is heavily modified by Matthias
- * Braun<matthias.braun@kit.edu>
+ * Note: This version is heavily modified by Matthias Braun<matthias.braun@kit.edu>
  * 
  * This class provides a Java 2, <code>javadoc</code> Doclet which generates a
  * LaTeX2e document out of the java classes that it is used on.
@@ -35,8 +34,6 @@ import com.sun.javadoc.Type;
  * HTMLToTex for details) Not working yet: - type parameters for
  * class/interface/methods are not printed yet - only a subset of the javadoc
  * tags are handled (param and return mostly)
- * 
- * {@link #TexDoclet TexDoclet} {@link #start(RootDoc) start}
  * 
  * @author <a href="mailto:gregg.wonderly@pobox.com">Gregg Wonderly</a>
  * @author <a href="mailto:matthias.braun@kit.edu">Matthias Braun</a>
@@ -237,7 +234,12 @@ public class TexDoclet extends Doclet {
 			}
 			os.print("{" + HTMLToTex.convert(member.name()) + "}");
 			os.print("{" + HTMLToTex.convert(formatParameters(member)) + "}");
-			os.print("{" + HTMLToTex.convert(member.commentText()) + "}");
+			if (member instanceof MethodDoc) {
+				MethodDoc methodDoc = (MethodDoc) member;
+				os.print("{" + HTMLToTex.convert(member.commentText(), methodDoc) + "}");
+			} else {
+				os.print("{" + HTMLToTex.convert(member.commentText()) + "}");
+			}
 			os.print("{");
 			printParameterDocumentation(member);
 			os.print("}");

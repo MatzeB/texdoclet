@@ -6,6 +6,9 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Stack;
 
+import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.MethodDoc;
+
 /**
  * Replace html/javadoc specific tags with latex commands.
  * Escapes special tex characters.
@@ -41,9 +44,14 @@ public class HTMLToTex {
 
 	public static String convert(String input) {
 		HTMLToTex instance = new HTMLToTex();
-		return instance.convertToTex(input);
+		return instance.convertToTex(input, null);
 	}
 
+	public static String convert(String input, MethodDoc md) {
+		HTMLToTex instance = new HTMLToTex();
+		return instance.convertToTex(input, md);
+	}
+	
 	private HTMLToTex() {
 	}
 
@@ -129,7 +137,7 @@ public class HTMLToTex {
 
 	private void processBlock(String block, StringBuffer ret) {
 		HTMLToTex subconv = new HTMLToTex();
-		ret.append(subconv.convertToTex(block));
+		ret.append(subconv.convertToTex(block, null));
 	}
 
 	private void stackTable(Properties p, StringBuffer ret, String txt, int off) {
@@ -155,8 +163,24 @@ public class HTMLToTex {
 		}
 		return lab;
 	}
+	
+	private MethodDoc findSuperMethod(MethodDoc md) {
+		MethodDoc overrides = md.overriddenMethod();
+		if (overrides != null)
+			return overrides;
+		
+		ClassDoc cls = md.containingClass();
+		/* search the method in implemented interfaces */
+		for (ClassDoc intf : cls.interfaces()) {
+			for (MethodDoc intfmethod : intf.methods()) {
+				if (md.overrides(intfmethod))
+					return intfmethod;
+			}
+		}
+		return null;
+	}
 
-	private String convertToTex(String input) {
+	private String convertToTex(String input, MethodDoc md) {
 		this.str = input;
 		ret = new StringBuffer();
 
@@ -206,6 +230,15 @@ public class HTMLToTex {
 					block = "@link";
 					collectBlock = true;
 					pos += 5;
+				} else if(match("{@inheritDoc}") && md != null) {
+					MethodDoc overridden = findSuperMethod(md);
+					if (overridden == null) {
+						System.err.println("Warning: No overridden method found for {@inheritDoc} (" + md.name() + ")");
+					} else {
+						ret.append(String.format("\\texdocinheritdoc{%s}{%s}",
+								convert(overridden.containingClass().qualifiedName()),
+								convert(overridden.commentText(), overridden)));
+					}
 				} else {
 					ret.append("$\\{$");
 				}
@@ -221,18 +254,17 @@ public class HTMLToTex {
 						&& str.substring(pos, pos + 2).equalsIgnoreCase("<h") 
 						&& Character.isDigit(str.substring(pos+2, pos+3).charAt(0))) {
 					String headnum = str.substring(pos+2, pos+3);
-					ret.append(String.format("\\headref{%1$s}{", headnum));
-					enter(String.format("</h%1$s>", headnum), "}\n");
+					ret.append(String.format("\\headref{%s}{", headnum));
+					enter(String.format("</h%s>", headnum), "}\n");
 					pos += 3;
 				} else if (str.length() > pos + 5
 						&& str.substring(pos, pos + 3).equalsIgnoreCase("</h") 
 						&& Character.isDigit(str.substring(pos+3, pos+4).charAt(0))) {
 					String headnum = str.substring(pos+3, pos+4);
-					leave(String.format("</h%1$s>", headnum));
+					leave(String.format("</h%s>", headnum));
 					pos += 4;
 				} else if (match("<html>")) {
 					enter("</html>", "");
-					/* nothing */
 				} else if (match("</html>")) {
 					leave("</html>");
 					if (chapt > 0) {
@@ -532,26 +564,17 @@ public class HTMLToTex {
 						ret.append("\\&\\#");
 						pos++;
 					}
-				} else if (str.length() > pos + 4
-						&& str.substring(pos, pos + 5)
-								.equalsIgnoreCase("&amp;")) {
+				} else if (match("&amp;")) {
 					ret.append("\\&");
-					pos += 4;
-				} else if (str.length() > pos + 5
-						&& str.substring(pos, pos + 6).equalsIgnoreCase(
-								"&nbsp;")) {
+				} else if (match("&nbsp;")) {
 					ret.append("\\phantom{ }");
-					pos += 5;
-				} else if (str.length() > pos + 3
-						&& str.substring(pos, pos + 4).equalsIgnoreCase("&lt;")) {
+				} else if (match("&lt;")) {
 					ret.append("\\textless{}");
-					pos += 3;
-				} else if (str.length() > pos + 3
-						&& str.substring(pos, pos + 4).equalsIgnoreCase("&gt;")) {
+				} else if (match("&gt;")) {
 					ret.append("\\textgreater{}");
-					pos += 3;
-				} else
+				} else {
 					ret.append("\\&");
+				}
 				break;
 			case '>':
 				ret.append("\\textgreater{}");

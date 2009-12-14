@@ -1,10 +1,10 @@
 package org.wonderly.doclets.test;
 
 /**
- * Hällö this is just a class to test texdoclet...
+ * H√§ll√∂ this is just a class to test texdoclet...
  * @author matze
  */
-public class TestClass {
+public class TestClass implements FooBar {
 	/**
 	 * <b>Warning:</b> This is <em>NOT</em> considered good documentation style. It's way too verbose to be usefull in
 	 * practice. Anyway this is just here to test texdoclet...
@@ -41,5 +41,11 @@ public class TestClass {
 	 */
 	public int addints(int a, int b) {
 		return a + b;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void bar() {
 	}
 }

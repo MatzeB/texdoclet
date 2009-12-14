@@ -102,6 +102,11 @@
 %  Argument 5: Documentation of parameters/exceptions/return values
 \newcommand{\texdocconstructor}[5]{\item \texttt{#1 \textbf{#2}#3} \\ #4#5}
 
+% Inserted when @inheritdoc is used
+%  Argument 1: Class where the documentation was inherited from
+%  Argument 2: Documentation
+\newcommand{\texdocinheritdoc}[2]{#2 (\textit{documentation inherited from \texttt{#1})}}
+
 % Environment around \texdocparameter invocations
 \newenvironment{texdocparameters}{%
 	\minisec{Parameters}
