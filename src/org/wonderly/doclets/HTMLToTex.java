@@ -80,8 +80,8 @@ public class HTMLToTex {
 	 * </p>
 	 * would be saved)
 	 */
-	private static Stack<String> contexts = new Stack<String>();
-	private static Stack<String> texContexts = new Stack<String>();
+	private Stack<String> contexts = new Stack<String>();
+	private Stack<String> texContexts = new Stack<String>();
 
 	private void enter(String exitString, String exitTexString) {
 		contexts.push(exitString);
