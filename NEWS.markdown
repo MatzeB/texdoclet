@@ -1,3 +1,11 @@
+TexDoclet 0.9.2 (2009-12-14)
+============================
+
+* Improve preamble.tex (\newpage instead of \pagebreak to avoid unnecessary
+  stretching; create a minipage around texdocparameters in tabular environemnt
+  to have linebreaking working)
+* Support for {@inheritDoc}
+
 TexDoclet 0.9.1 (2009-12-10)
 ============================
 
