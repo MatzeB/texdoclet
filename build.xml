@@ -7,7 +7,7 @@
 		<property name="srcdir"     value="./src"/>
 		<property name="builddir"   value="./bin"/>
 		<property name="releasedir" value="./release"/>
-		<property name="version"    value="0.9.2"/>
+		<property name="version"    value="0.9.3"/>
 		<property name="jarfile"    value="${releasedir}/texdoclet-${version}.jar"/>
 		<property name="mainclass"  value="org.wondery.doclets.TexDoclet"/>
 	</target>
