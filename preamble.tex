@@ -78,12 +78,25 @@
 	\end{itemize}
 }
 
+% Environment around enum constants
+\newenvironment{texdocenums}{%
+	\subsection*{Enum Constants}
+	\begin{itemize}
+}{%
+	\end{itemize}
+}
+
 % Formats a single field
 %  Argument 1: modifiers
 %  Argument 2: type
 %  Argument 3: name
 %  Argument 4: Documentation text
 \newcommand{\texdocfield}[4]{\item \texttt{#1 #2 \textbf{#3}} \\ #4}
+
+% Formats an enum element
+%  Argument 1: name
+%  Argument 2: documentation text
+\newcommand{\texdocenum}[2]{\item \texttt{\textbf{#1}} \\ #2}
 
 % Formats a single method
 %  Argument 1: modifiers

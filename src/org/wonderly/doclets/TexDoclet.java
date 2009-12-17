@@ -147,7 +147,14 @@ public class TexDoclet extends Doclet {
 	}
 
 	private static void printClass(ClassDoc cd) {
-		String type = cd.isInterface() ? "interface" : "class";
+		String type;
+		if (cd.isInterface()) {
+			type = "interface";
+		} else if (cd.isEnum()) { 
+			type = "enum";
+		} else {
+			type = "class";
+		}
 
 		os.println("\\begin{texdocclass}{" + type + "}{"
 				+ HTMLToTex.convert(cd.name()) + "}");
@@ -168,6 +175,13 @@ public class TexDoclet extends Doclet {
 			os.println("\\begin{texdocclassconstructors}");
 			printExecutableMembers(cd, constructors, "constructor");
 			os.println("\\end{texdocclassconstructors}");
+		}
+		
+		FieldDoc[] enums = cd.enumConstants();
+		if (enums.length > 0) {
+			os.println("\\begin{texdocenums}");
+			printEnums(cd, enums);
+			os.println("\\end{texdocenums}");
 		}
 
 		MethodDoc[] methods = cd.methods();
@@ -201,6 +215,29 @@ public class TexDoclet extends Doclet {
 			os.print("\\texdocfield");
 			os.print("{" + HTMLToTex.convert(f.modifiers()) + "}");
 			os.print("{" + HTMLToTex.convert(typeToString(f.type())) + "}");
+			os.print("{" + HTMLToTex.convert(f.name()) + "}");
+			os.print("{" + HTMLToTex.convert(f.commentText()) + "}");
+			os.println("");
+		}
+	}
+	
+	/**
+	 * Enumerates the enum constants passed and formats them using Tex statements.
+	 * 
+	 * @param enums
+	 *            the enum constants to format
+	 */
+	private static void printEnums(ClassDoc cd, FieldDoc[] enums) {
+
+		/* sort by name */
+		Arrays.sort(enums, new Comparator<FieldDoc>() {
+			public int compare(FieldDoc o1, FieldDoc o2) {
+				return o1.name().compareToIgnoreCase(o2.name());
+			}
+		});
+
+		for (FieldDoc f : enums) {
+			os.print("\\texdocenum");
 			os.print("{" + HTMLToTex.convert(f.name()) + "}");
 			os.print("{" + HTMLToTex.convert(f.commentText()) + "}");
 			os.println("");
