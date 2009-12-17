@@ -44,6 +44,18 @@ public class TestClass implements FooBar {
 	}
 	
 	/**
+	 * <ul>
+	 * <li>This is <tt>TT tt TT</tt></li>
+	 * <li>This is <b>bold</b>, <i>italic</i> and <em>emphasized</em></li>
+	 * <li>We can also combine <b>bold and <i>italic</i></b>.</li>
+	 * <li><b><tt>bold tt</tt></b></li>
+	 * <li><strong>strong</strong></li>
+	 * </ul> 
+	 */
+	public void formats() {
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 */
 	public void bar() {

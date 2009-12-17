@@ -339,6 +339,11 @@ public class HTMLToTex {
 					ret.append("\\newline\\rule[2mm]{\\hsize}{"
 							+ (1 * size * .5) + "mm}\\newline\n");
 					pos = idx;
+				} else if (match("<tt>")) {
+					ret.append("\\texttt{");
+					enter("</tt>", "}");
+				} else if (match("</tt>")) {
+					leave("</tt>");
 				} else if (match("<b>")) {
 					ret.append("\\textbf{");
 					enter("</b>", "}");
@@ -414,6 +419,8 @@ public class HTMLToTex {
 				} else if (match("<li>")) {
 					++itemcnt;
 					ret.append("\\item ");
+				} else if (match("</li>")) {
+					/* ignore */
 				} else if (match("<dt>")) {
 					++itemcnt;
 					ret.append("\\item[");
