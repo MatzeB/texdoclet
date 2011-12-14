@@ -38,8 +38,10 @@ public class TestClass implements FooBar {
 	 *         expect the sum of 2 positive numbers to be necessarily bigger than both parts.
 	 *         Likewise the sum of 2 negative numbers is not necessarily smaller than both
 	 *         summands.
+	 * @throws IllegalArgumentException if a is less than 0.
 	 */
 	public int addints(int a, int b) {
+		if (a < 0) throw new IllegalArgumentException();
 		return a + b;
 	}
 	

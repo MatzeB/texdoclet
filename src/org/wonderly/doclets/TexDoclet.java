@@ -22,6 +22,7 @@ import com.sun.javadoc.Parameter;
 import com.sun.javadoc.ParameterizedType;
 import com.sun.javadoc.RootDoc;
 import com.sun.javadoc.Tag;
+import com.sun.javadoc.ThrowsTag;
 import com.sun.javadoc.Type;
 
 /**
@@ -306,6 +307,16 @@ public class TexDoclet extends Doclet {
 			}
 			os.print("}");
 			os.println("");
+		}
+		ThrowsTag[] throwsTags = member.throwsTags();
+		if (throwsTags.length > 0) {
+			os.println("\\begin{texdocthrows}");
+			for (ThrowsTag tag : member.throwsTags()) {
+				os.print("\\texdocthrow{" + HTMLToTex.convert(tag.exceptionName()) + "}");
+				os.print("{" + HTMLToTex.convert(tag.exceptionComment()) + "}");
+				os.println("");
+			}
+			os.println("\\end{texdocthrows}");
 		}
 	}
 

@@ -128,6 +128,14 @@
 	\end{tabular}
 }
 
+% Environment around \texdocthrows invocations
+\newenvironment{texdocthrows}{%
+        \minisec{Throws}
+        \begin{tabular}{ll}
+}{%
+        \end{tabular}
+}
+
 \newcommand{\texdocreturn}[1]{\minisec{Returns} #1}
 
 % Formats a parameter (this gets put inside the input of a \texdocmethod or 
@@ -135,6 +143,11 @@
 %  Argument 1: name
 %  Argument 2: description text
 \newcommand{\texdocparameter}[2]{\texttt{\textbf{#1}} & \begin{minipage}[t]{0.8\textwidth}#2\end{minipage} \\}
+
+% Formats a throws tag
+%  Argument 1: exception name
+%  Argument 2: description text
+\newcommand{\texdocthrow}[2]{\texttt{\textbf{#1}} & \begin{minipage}[t]{0.8\textwidth}#2\end{minipage} \\}
 
 % Used to simulate html <br/>
 \newcommand{\texdocbr}{\mbox{}\newline{}}
