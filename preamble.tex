@@ -86,6 +86,15 @@
 	\end{itemize}
 }
 
+% Environment around "See also"-Blocks (\texdocsee invocations)
+%  Argument 1: Text preceding the references
+\newenvironment{texdocsees}[1]{
+	
+	\textbf{#1:}
+	\begin{itemize}
+}{%
+	\end{itemize}
+}
 % Formats a single field
 %  Argument 1: modifiers
 %  Argument 2: type
@@ -120,6 +129,11 @@
 %  Argument 2: Documentation
 \newcommand{\texdocinheritdoc}[2]{#2 (\textit{documentation inherited from \texttt{#1})}}
 
+% Formats a single see-BlockTag
+%  Argument 1: text
+%  Argument 2: reference label
+\newcommand{\texdocsee}[2]{\item \texttt{#1 (\ref{#2})}}
+
 % Environment around \texdocparameter invocations
 \newenvironment{texdocparameters}{%
 	\minisec{Parameters}
@@ -128,7 +142,7 @@
 	\end{tabular}
 }
 
-% Environment around \texdocthrows invocations
+% Environment around \texdocthrow invocations
 \newenvironment{texdocthrows}{%
         \minisec{Throws}
         \begin{tabular}{ll}
@@ -147,7 +161,7 @@
 % Formats a throws tag
 %  Argument 1: exception name
 %  Argument 2: description text
-\newcommand{\texdocthrow}[2]{\texttt{\textbf{#1}} & \begin{minipage}[t]{0.8\textwidth}#2\end{minipage} \\}
+\newcommand{\texdocthrow}[2]{\texttt{\textbf{#1}} & \begin{minipage}[t]{0.6\textwidth}#2\end{minipage} \\}
 
 % Used to simulate html <br/>
 \newcommand{\texdocbr}{\mbox{}\newline{}}
