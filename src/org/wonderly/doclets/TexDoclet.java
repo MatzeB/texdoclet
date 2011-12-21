@@ -202,21 +202,21 @@ public class TexDoclet extends Doclet {
 		}
 	}
 
-        private static MethodDoc findSuperMethod(MethodDoc md) {
-                MethodDoc overrides = md.overriddenMethod();
-                if (overrides != null)
-                        return overrides;
+	private static MethodDoc findSuperMethod(MethodDoc md) {
+		MethodDoc overrides = md.overriddenMethod();
+		if (overrides != null)
+			return overrides;
 
-                ClassDoc cls = md.containingClass();
-                /* search the method in implemented interfaces */
-                for (ClassDoc intf : cls.interfaces()) {
-                        for (MethodDoc intfmethod : intf.methods()) {
-                                if (md.overrides(intfmethod))
-                                        return intfmethod;
-                        }
-                }
-                return null;
-        }
+		ClassDoc cls = md.containingClass();
+		/* search the method in implemented interfaces */
+		for (ClassDoc intf : cls.interfaces()) {
+			for (MethodDoc intfmethod : intf.methods()) {
+				if (md.overrides(intfmethod))
+					return intfmethod;
+			}
+		}
+		return null;
+	}
 
 	private static void printClasses(ClassDoc[] classes) {
 		Arrays.sort(classes, new Comparator<ClassDoc>() {
