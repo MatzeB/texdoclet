@@ -135,11 +135,6 @@ public class HTMLToTex {
 		return true;
 	}
 
-	private void processBlock(String block, StringBuffer ret) {
-		HTMLToTex subconv = new HTMLToTex();
-		ret.append(subconv.convertToTex(block, null));
-	}
-
 	private void stackTable(Properties p, StringBuffer ret, String txt, int off) {
 		tblstk.push(tblinfo);
 		tblinfo = new TableInfo(p, ret, txt, off);
@@ -164,43 +159,13 @@ public class HTMLToTex {
 		return lab;
 	}
 
-	/**
-	 * Moved to class TexDoclet.
-	 */
-	@Deprecated
-	private MethodDoc findSuperMethod(MethodDoc md) {
-		MethodDoc overrides = md.overriddenMethod();
-		if (overrides != null)
-			return overrides;
-		
-		ClassDoc cls = md.containingClass();
-		/* search the method in implemented interfaces */
-		for (ClassDoc intf : cls.interfaces()) {
-			for (MethodDoc intfmethod : intf.methods()) {
-				if (md.overrides(intfmethod))
-					return intfmethod;
-			}
-		}
-		return null;
-	}
-
 	private String convertToTex(String input, MethodDoc md) {
 		this.str = input;
 		ret = new StringBuffer();
 
-		boolean svcoll = false;
-		String svblock = null;
-		if (textdepth > 0) {
-			svcoll = collectBlock;
-			svblock = block;
-		}
 		++textdepth;
 		for (pos = 0; pos < str.length(); ++pos) {
 			char c = str.charAt(pos);
-			if (collectBlock == true && c != '}') {
-				block += str.charAt(pos);
-				continue;
-			}
 			switch (c) {
 			case ' ':
 				if (verbat > 0) {
@@ -220,33 +185,10 @@ public class HTMLToTex {
 				ret.append("$\\wedge$");
 				break;
 			case '}':
-				if (collectBlock == false) {
-					ret.append("$\\}$");
-					break;
-				}
-				collectBlock = false;
-				processBlock(block, ret);
+				ret.append("$\\}$");
 				break;
 			case '{':
-				// Deprecated: InlineTags are now handled by TexDoclet.
-//				if (str.length() > pos + 5
-//						&& str.substring(pos, pos + 6).equalsIgnoreCase(
-//								"{@link")) {
-//					block = "@link";
-//					collectBlock = true;
-//					pos += 5;
-//				} else if(match("{@inheritDoc}") && md != null) {
-//					MethodDoc overridden = findSuperMethod(md);
-//					if (overridden == null) {
-//						System.err.println("Warning: No overridden method found for {@inheritDoc} (" + md.name() + ")");
-//					} else {
-//						ret.append(String.format("\\texdocinheritdoc{%s}{%s}",
-//								convert(overridden.containingClass().qualifiedName()),
-//								convert(overridden.commentText(), overridden)));
-//					}
-//				} else {
-//					ret.append("$\\{$");
-//				}
+				ret.append("$\\{$");
 				break;
 			case '<':
 				if (match("<pre>")) {
@@ -598,10 +540,6 @@ public class HTMLToTex {
 				ret.append((char) c);
 				break;
 			}
-		}
-		if (textdepth > 0) {
-			collectBlock = svcoll;
-			block = svblock;
 		}
 		--textdepth;
 

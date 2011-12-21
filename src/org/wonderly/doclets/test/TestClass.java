@@ -29,6 +29,8 @@ public class TestClass implements FooBar {
 	 * We can even have text in the
 	 * <center>center</center>
 	 * of the universe - I mean line.
+	 *
+	 * Curly braces: { }
 	 * 
 	 * @param a The first operand of the summation.
 	 * 		This is the first of the 2 summands.
