@@ -2,6 +2,7 @@ package org.wonderly.doclets.test;
 
 /**
  * Hällö this is just a class to test texdoclet...
+ * This class implements the interface {@see FooBar}!
  * @author matze
  */
 public class TestClass implements FooBar {
@@ -39,6 +40,7 @@ public class TestClass implements FooBar {
 	 *         Likewise the sum of 2 negative numbers is not necessarily smaller than both
 	 *         summands.
 	 * @throws IllegalArgumentException if a is less than 0.
+	 * @see TestClass
 	 */
 	public int addints(int a, int b) {
 		if (a < 0) throw new IllegalArgumentException();
@@ -62,4 +64,5 @@ public class TestClass implements FooBar {
 	 */
 	public void bar() {
 	}
+
 }

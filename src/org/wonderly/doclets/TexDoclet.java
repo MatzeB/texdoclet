@@ -181,11 +181,42 @@ public class TexDoclet extends Doclet {
 					os.print(getLabel(st));
 					os.print("})");
 				}
+			} else if (t.kind().equals("@inheritDoc")) {
+				MethodDoc overridden = findSuperMethod(md);
+				if (overridden == null) {
+					System.err.println("Warning: No overridden method found for {@inheritDoc} (" + md.name() + ")");
+					os.print(HTMLToTex.convert(t.text(), md));
+				} else {
+					os.print("\\texdocinheritdoc{");
+					os.print(overridden.containingClass().qualifiedName());
+					os.print("}{");
+					printComment(overridden.inlineTags(), overridden);
+					os.print("}");
+				}
 			} else {
+				if (!t.kind().equals("Text")) {
+					System.err.println("Warning: Unknown Tag of kind " + t.kind());
+				}
 				os.print(HTMLToTex.convert(t.text(), md));
 			}
 		}
 	}
+
+        private static MethodDoc findSuperMethod(MethodDoc md) {
+                MethodDoc overrides = md.overriddenMethod();
+                if (overrides != null)
+                        return overrides;
+
+                ClassDoc cls = md.containingClass();
+                /* search the method in implemented interfaces */
+                for (ClassDoc intf : cls.interfaces()) {
+                        for (MethodDoc intfmethod : intf.methods()) {
+                                if (md.overrides(intfmethod))
+                                        return intfmethod;
+                        }
+                }
+                return null;
+        }
 
 	private static void printClasses(ClassDoc[] classes) {
 		Arrays.sort(classes, new Comparator<ClassDoc>() {

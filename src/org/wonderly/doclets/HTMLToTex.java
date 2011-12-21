@@ -163,7 +163,11 @@ public class HTMLToTex {
 		}
 		return lab;
 	}
-	
+
+	/**
+	 * Moved to class TexDoclet.
+	 */
+	@Deprecated
 	private MethodDoc findSuperMethod(MethodDoc md) {
 		MethodDoc overrides = md.overriddenMethod();
 		if (overrides != null)
@@ -224,24 +228,25 @@ public class HTMLToTex {
 				processBlock(block, ret);
 				break;
 			case '{':
-				if (str.length() > pos + 5
-						&& str.substring(pos, pos + 6).equalsIgnoreCase(
-								"{@link")) {
-					block = "@link";
-					collectBlock = true;
-					pos += 5;
-				} else if(match("{@inheritDoc}") && md != null) {
-					MethodDoc overridden = findSuperMethod(md);
-					if (overridden == null) {
-						System.err.println("Warning: No overridden method found for {@inheritDoc} (" + md.name() + ")");
-					} else {
-						ret.append(String.format("\\texdocinheritdoc{%s}{%s}",
-								convert(overridden.containingClass().qualifiedName()),
-								convert(overridden.commentText(), overridden)));
-					}
-				} else {
-					ret.append("$\\{$");
-				}
+				// Deprecated: InlineTags are now handled by TexDoclet.
+//				if (str.length() > pos + 5
+//						&& str.substring(pos, pos + 6).equalsIgnoreCase(
+//								"{@link")) {
+//					block = "@link";
+//					collectBlock = true;
+//					pos += 5;
+//				} else if(match("{@inheritDoc}") && md != null) {
+//					MethodDoc overridden = findSuperMethod(md);
+//					if (overridden == null) {
+//						System.err.println("Warning: No overridden method found for {@inheritDoc} (" + md.name() + ")");
+//					} else {
+//						ret.append(String.format("\\texdocinheritdoc{%s}{%s}",
+//								convert(overridden.containingClass().qualifiedName()),
+//								convert(overridden.commentText(), overridden)));
+//					}
+//				} else {
+//					ret.append("$\\{$");
+//				}
 				break;
 			case '<':
 				if (match("<pre>")) {
