@@ -65,8 +65,6 @@ public class HTMLToTex {
 	private int chapt = 0;
 	private int textdepth = 0;
 	private int verbat = 0;
-	private int itemcnt;
-	private Stack<Integer> itemcnts = new Stack<Integer>();
 	private Stack<TableInfo> tblstk = new Stack<TableInfo>();
 	private Hashtable<String, String> colors = new Hashtable<String, String>(10);
 	private int colIdx = 0;
@@ -352,50 +350,32 @@ public class HTMLToTex {
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					pos = idx;
 					ret.append("\\begin{enumerate}\n");
-					itemcnts.push(new Integer(itemcnt));
-					itemcnt = 0;
 				} else if (str.length() > pos + 2
 						&& str.substring(pos, pos + 3).equalsIgnoreCase("<dl")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					pos = idx;
 					ret.append("\\begin{itemize}\n");
-					itemcnts.push(new Integer(itemcnt));
-					itemcnt = 0;
 				} else if (match("<li>")) {
-					++itemcnt;
 					ret.append("\\item ");
 				} else if (match("</li>")) {
 					/* ignore */
 				} else if (match("<dt>")) {
-					++itemcnt;
 					ret.append("\\item[");
 				} else if (match("<dd>")) {
-					++itemcnt;
 					ret.append("] ");
 				} else if (match("</dl>")) {
 					ret.append("\n\\end{itemize}\n");
-					itemcnt = 0;
-					if (itemcnts.isEmpty() == false)
-						itemcnt = itemcnts.pop().intValue();
 				} else if (match("</ol>")) {
 					ret.append("}\n\\end{enumerate}");
-					itemcnt = 0;
-					if (itemcnts.isEmpty() == false)
-						itemcnt = itemcnts.pop().intValue();
 				} else if (str.length() > pos + 3
 						&& str.substring(pos, pos + 3).equalsIgnoreCase("<ul")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					pos = idx;
 					ret.append("\\begin{itemize}");
-					itemcnts.push(new Integer(itemcnt));
-					itemcnt = 0;
 				} else if (match("</ul>")) {
 					ret.append("\\end{itemize}\n");
-					itemcnt = 0;
-					if (itemcnts.isEmpty() == false)
-						itemcnt = itemcnts.pop().intValue();
 				} else if (match("</table>")) {
 					tblinfo.endTable(ret);
 					tblinfo = tblstk.pop();
