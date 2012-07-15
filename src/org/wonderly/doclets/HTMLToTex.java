@@ -121,11 +121,10 @@ public class HTMLToTex {
 	}
 
 	private boolean match(String needle) {
+		if (pos + needle.length() >= str.length())
+			return false;
 		for (int i = 0; i < needle.length(); ++i) {
-			if (pos + i >= str.length())
-				return false;
-			if (Character.toLowerCase(needle.charAt(i)) != Character
-					.toLowerCase(str.charAt(pos + i)))
+			if (Character.toLowerCase(needle.charAt(i)) != Character.toLowerCase(str.charAt(pos + i)))
 				return false;
 		}
 		pos += needle.length() - 1; /*
@@ -560,12 +559,11 @@ public class HTMLToTex {
 	 */
 	protected static int getTagAttrs(String str, Properties p, int i) {
 		// static Properties getTagAttrs( String str, int i ) {
-		byte b[] = str.getBytes();
 		String name = "";
 		String value = "";
 		int state = 0;
-		while (i < b.length) {
-			switch ((char) b[i]) {
+		while (i < str.length()) {
+			switch (str.charAt(i)) {
 			case ' ':
 				if (state == 2) {
 					p.put(name.toLowerCase(), value);
@@ -605,9 +603,9 @@ public class HTMLToTex {
 				if (state == 0)
 					state = 1;
 				if (state == 1) {
-					name = name + (char) b[i];
+					name = name + str.charAt(i);
 				} else {
-					value = value + (char) b[i];
+					value = value + str.charAt(i);
 				}
 			}
 			++i;
