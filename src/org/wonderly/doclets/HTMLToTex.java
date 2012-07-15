@@ -118,13 +118,19 @@ public class HTMLToTex {
 		}
 	}
 
-	private boolean match(String needle) {
+	private boolean startsWith(String needle) {
 		if (pos + needle.length() >= str.length())
 			return false;
 		for (int i = 0; i < needle.length(); ++i) {
 			if (Character.toLowerCase(needle.charAt(i)) != Character.toLowerCase(str.charAt(pos + i)))
 				return false;
 		}
+		return true;
+	}
+
+	private boolean match(String needle) {
+		if (!startsWith(needle))
+			return false;
 		pos += needle.length() - 1; /*
 									 * hacky: the -1 compensates the ++i in the
 									 * for loop in convert...
@@ -224,9 +230,7 @@ public class HTMLToTex {
 					enter("</center>", "\\end{center}");
 				} else if (match("</center>")) {
 					leave("</center>");
-				} else if (str.length() > pos + 4
-						&& str.substring(pos, pos + 5)
-								.equalsIgnoreCase("<meta")) {
+				} else if (startsWith("<meta")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					pos = idx;
@@ -234,25 +238,19 @@ public class HTMLToTex {
 					ret.append("\\chapter{");
 				} else if (match("</title>")) {
 					ret.append("}");
-				} else if (str.length() > pos + 4
-						&& str.substring(pos, pos + 5)
-								.equalsIgnoreCase("<form")) {
+				} else if (startsWith("<form")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					pos = idx;
 				} else if (match("</form>")) {
 					/* nothing */
-				} else if (str.length() > pos + 5
-						&& str.substring(pos, pos + 6).equalsIgnoreCase(
-								"<input")) {
+				} else if (startsWith("<input")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					pos = idx;
 				} else if (match("</input>")) {
 					/* nothing */
-				} else if (str.length() > pos + 4
-						&& str.substring(pos, pos + 5)
-								.equalsIgnoreCase("<body")) {
+				} else if (startsWith("<body")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					pos = idx;
@@ -272,8 +270,7 @@ public class HTMLToTex {
 				} else if (match("<p>")) {
 					ret.append("\\begin{texdocp}");
 					enter("</p>", "\\end{texdocp}");
-				} else if (str.length() > pos + 2
-						&& str.substring(pos, pos + 3).equalsIgnoreCase("<hr")) {
+				} else if (startsWith("<hr")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					String sz = p.getProperty("size");
@@ -315,8 +312,7 @@ public class HTMLToTex {
 					leave("</i>");					
 				} else if (match("</img>")) {
 					/* nothing */
-				} else if (str.length() > pos + 4
-						&& str.substring(pos, pos + 4).equalsIgnoreCase("<img")) {
+				} else if (startsWith("<img")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 4);
 					refimg = p.getProperty("src");
@@ -332,8 +328,7 @@ public class HTMLToTex {
 						else
 							ret.append("(at " + convert(refurl) + ")");
 					}
-				} else if (str.length() > pos + 2
-						&& str.substring(pos, pos + 2).equalsIgnoreCase("<a")) {
+				} else if (startsWith("<a")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					refurl = p.getProperty("href");
@@ -344,14 +339,12 @@ public class HTMLToTex {
 					else if (refname != null)
 						ret.append("\\label{" + refName(makeRefKey(refname))
 								+ "}");
-				} else if (str.length() > pos + 3
-						&& str.substring(pos, pos + 3).equalsIgnoreCase("<ol")) {
+				} else if (startsWith("<ol")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					pos = idx;
 					ret.append("\\begin{enumerate}\n");
-				} else if (str.length() > pos + 2
-						&& str.substring(pos, pos + 3).equalsIgnoreCase("<dl")) {
+				} else if (startsWith("<dl")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					pos = idx;
@@ -368,8 +361,7 @@ public class HTMLToTex {
 					ret.append("\n\\end{itemize}\n");
 				} else if (match("</ol>")) {
 					ret.append("}\n\\end{enumerate}");
-				} else if (str.length() > pos + 3
-						&& str.substring(pos, pos + 3).equalsIgnoreCase("<ul")) {
+				} else if (startsWith("<ul")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
 					pos = idx;
@@ -385,34 +377,27 @@ public class HTMLToTex {
 					tblinfo.endCol(ret);
 				} else if (match("</tr>")) {
 					tblinfo.endRow(ret);
-				} else if (str.length() > pos + 5
-						&& str.substring(pos, pos + 6).equalsIgnoreCase(
-								"<table")) {
+				} else if (startsWith("<table")) {
 					Properties p = new Properties();
 					int idx = getTagAttrs(str, p, pos + 6);
 					pos = idx;
 					stackTable(p, ret, str, pos);
-				} else if (str.length() > pos + 2
-						&& str.substring(pos, pos + 3).equalsIgnoreCase("<tr")) {
+				} else if (startsWith("<tr")) {
 					Properties p = new Properties();
 					int idx = getTagAttrs(str, p, pos + 3);
 					pos = idx;
 					tblinfo.startRow(ret, p);
-				} else if (str.length() > pos + 2
-						&& str.substring(pos, pos + 3).equalsIgnoreCase("<td")) {
+				} else if (startsWith("<tr")) {
 					Properties p = new Properties();
 					int idx = getTagAttrs(str, p, pos + 3);
 					pos = idx;
 					tblinfo.startCol(ret, p);
-				} else if (str.length() > pos + 2
-						&& str.substring(pos, pos + 3).equalsIgnoreCase("<th")) {
+				} else if (startsWith("<th")) {
 					Properties p = new Properties();
 					int idx = getTagAttrs(str, p, pos + 3);
 					pos = idx;
 					tblinfo.startHeadCol(ret, p);
-				} else if (str.length() > pos + 4
-						&& str.substring(pos, pos + 5)
-								.equalsIgnoreCase("<font")) {
+				} else if (startsWith("<font")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 5);
 					pos = idx;
