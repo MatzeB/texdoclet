@@ -114,11 +114,10 @@ public class TableInfo {
 			}
 		}
 		ret.append("\n% Table #" + tblno + "\n");
-		byte[] b = table.getBytes();
 		int col = 0;
 		int row = 0;
-		for (int i = off; i < b.length; ++i) {
-			if (b[i] == '<') {
+		for (int i = off; i < table.length(); ++i) {
+			if (table.charAt(i) == '<') {
 				if (table.substring(i, i + 7).equalsIgnoreCase("</table")) {
 					break;
 				} else if (table.substring(i, i + 4).equalsIgnoreCase("</tr")) {
