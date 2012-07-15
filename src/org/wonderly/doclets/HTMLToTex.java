@@ -119,7 +119,7 @@ public class HTMLToTex {
 	}
 
 	private boolean startsWith(String needle) {
-		if (pos + needle.length() >= str.length())
+		if (pos + needle.length() > str.length())
 			return false;
 		for (int i = 0; i < needle.length(); ++i) {
 			if (Character.toLowerCase(needle.charAt(i)) != Character.toLowerCase(str.charAt(pos + i)))
