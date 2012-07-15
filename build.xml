@@ -14,7 +14,7 @@
 
 	<target name="compile" depends="init" description="compile sourcefiles">
 		<mkdir dir="${builddir}"/>
-		<javac srcdir="${srcdir}" destdir="${builddir}" debug="true" source="1.5" target="1.5">
+		<javac srcdir="${srcdir}" destdir="${builddir}" debug="true" source="1.5" target="1.5" includeantruntime="false">
 			<classpath>
 				<pathelement location="${toolsjar}"/>
 			</classpath>
@@ -37,6 +37,8 @@
 			<arg value="org.wonderly.doclets.TexDoclet"/>
 			<arg value="-sourcepath"/>
 			<arg value="src"/>
+			<arg value="-encoding"/>
+			<arg value="utf-8"/>
 			<arg value="org.wonderly.doclets"/>
 			<arg value="org.wonderly.doclets.test"/>
 		</exec>
