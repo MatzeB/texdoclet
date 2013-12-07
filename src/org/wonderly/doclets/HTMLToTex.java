@@ -360,7 +360,7 @@ public class HTMLToTex {
 				} else if (match("</dl>")) {
 					ret.append("\n\\end{itemize}\n");
 				} else if (match("</ol>")) {
-					ret.append("}\n\\end{enumerate}");
+					ret.append("\n\\end{enumerate}");
 				} else if (startsWith("<ul")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
