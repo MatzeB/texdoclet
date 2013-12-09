@@ -231,6 +231,10 @@ public class TexDoclet extends Doclet {
 	}
 
 	private static void printClass(ClassDoc cd) {
+		if (cd.tags("@excludeFromTex").length > 0) {
+			return;
+		}
+		
 		String type;
 		if (cd.isInterface()) {
 			type = "interface";
