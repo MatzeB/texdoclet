@@ -3,9 +3,21 @@ TexDoclet
 
 This is a javadoc doclet - a plugin for the [javadoc tool](http://java.sun.com/j2se/javadoc/). This doclet produces output suitable to
 be included into LaTeX documents.
-This version is based on [TexDoclet](https://texdoclet.dev.java.net/) from Gregg Wonderly.
-A lot of the code was rewritten and changed to support a separation from content
-and layout. The sourcecode is also cleaner than the original.
+This version is based on [TexDoclet](https://texdoclet.dev.java.net/) from Gregg Wonderly with the changes made and
+applied to by [Matthias Braun](https://github.com/MatzeB). See his github project for details.
+
+My fork adapts the doclet to meet the requirements of our project [lambda-alligatoren](https://github.com/vincent23/lambda-alligatoren).
+In detail, those are:
+* @excludeFromTex tag support
+* modify the original "preamble.tex" to become an "\\input"-able "docletcommands.tex" (thanks to [@vincent23](https://github.com/vincent23))
+* fix a surplus "}" in HTMLtoTex which broke ordered lists
+
+Build instructions
+------------------
+* The ant Build.xml file provided does NOT run on its own.
+* You will need to open the project in Eclipse
+* You will probably have to update the path to "tools.jar" in the project's build path properties if you aren't on linux and/or using an SDK different to openjdk 7
+* You can build a self-contained doclet jar file by exporting the project as jar from eclipse
 
 Features
 --------
@@ -33,7 +45,7 @@ Usage
    Use \input{docs.tex} inside your document to include the generated
    documentation.
 
-Author/Contact
+Original Author/Contact
 --------------
 
 Matthias Braun <matthias.braun@kit.edu>
