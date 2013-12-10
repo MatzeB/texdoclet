@@ -16,7 +16,7 @@
 }
 % Environment for packages
 \newenvironment{texdocpackage}[1]{%
-        \newpage{}\gdef\packagename{#1}\chapter{Package \texttt{#1}}
+        \newpage{}\gdef\packagename{#1}\section{Package \texttt{#1}}
         \rule{\hsize}{.7mm}
 }{}
 
@@ -25,19 +25,19 @@
 % Argument 2: the name of the class/interface
 \newenvironment{texdocclass}[2]{%
         \gdef\classname{#2}
-        \section{\texttt{#1 \textbf{#2}}}
+        \subsection{\texttt{#1 \textbf{#2}}}
 % }{\newpage{}}
 }{} % removed \newpage
 
 % Environment for class description
 \newenvironment{texdocclassintro}{
-        \subsection*{Description}
+        \subsubsection*{Description}
 }{
 }
 
 % Environment around class fields
 \newenvironment{texdocclassfields}{%
-        \subsection*{Attributes}
+        \subsubsection*{Attributes}
         \begin{itemize}
 }{%
         \end{itemize}
@@ -45,7 +45,7 @@
 
 % Environment around class methods
 \newenvironment{texdocclassmethods}{%
-        \subsection*{Methods}
+        \subsubsection*{Methods}
         \begin{itemize}
 }{%
         \end{itemize}
@@ -53,7 +53,7 @@
 
 % Environment around class Constructors
 \newenvironment{texdocclassconstructors}{%
-        \subsection*{Constructors}
+        \subsubsection*{Constructors}
         \begin{itemize}
 }{%
         \end{itemize}
@@ -61,7 +61,7 @@
 
 % Environment around enum constants
 \newenvironment{texdocenums}{%
-        \subsection*{Enum Constants}
+        \subsubsection*{Enum Constants}
         \begin{itemize}
 }{%
         \end{itemize}
