@@ -16,9 +16,9 @@
 }
 % Environment for packages
 \newenvironment{texdocpackage}[1]{%
-        \newpage{}\gdef\packagename{#1}\section{Package \texttt{#1}}
+        \gdef\packagename{#1}\section{Package \texttt{#1}}
         \rule{\hsize}{.7mm}
-}{}
+}{\newpage{}}
 
 % Environment for classes, interfaces
 % Argument 1: "class" or "interface"
