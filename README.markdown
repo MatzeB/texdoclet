@@ -26,6 +26,17 @@ Features
 * Layout is defined by a set of macros outside the tool. This allows you to
   easily adapt to your own style/document without the need to touch the tools
   output.
+* Classes not intended to be part of the generated tex document can be excluded with a dedicated "texignore" tag.
+* Shows generalization and realizations
+* Has doclet specific tex commands outsourced to allow easy integration into existing documents.
+
+Commandline Options
+-------------------
+* -output: Defines the output file path. Default is "docs.tex"
+* -silent: If this option is specified, all usually unnecessary messages are muted. Error messages will be printed still.
+* -see: Specifies the text to use for references created from inline tags. The default text is "see "
+* -See: Specifies the text to use for references created from block tags. The default text is "See also ".
+* -help: Prints a help text similar to this
 
 Usage
 -----
