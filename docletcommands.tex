@@ -1,3 +1,5 @@
+%\usepackage{xparse}
+
 \pagestyle{myheadings}
 % Initially we're not in a package or class
 \def\packagename{}
@@ -23,11 +25,21 @@
 % Environment for classes, interfaces
 % Argument 1: "class" or "interface"
 % Argument 2: the name of the class/interface
-\newenvironment{texdocclass}[2]{%
-        \gdef\classname{#2}
-        \subsection{\texttt{#1 \textbf{#2}}}
+% Argument 3 [opt.]: the name of the superclass
+% Argument 4 [opt.]: the name of the realized interfaces
+% TODO: Probably easier implementation with xparse instead of pgfkeys. Would make substitution ; <-> , unnecessary
+\NewDocumentEnvironment{texdocclass}{ m m o o }{%
+		\gdef\classname{#2}
+		\subsection[#2]{\texttt{#1 \textbf{#2}
+			\IfNoValueTF{#3}
+			{}
+			{extends #3}
+			\IfNoValueTF{#4}
+			{}
+			{implements #4}
+		}}
 % }{\newpage{}}
-}{} % removed \newpage
+}{}% removed \newpage
 
 % Environment for class description
 \newenvironment{texdocclassintro}{

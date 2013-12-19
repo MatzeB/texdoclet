@@ -29,6 +29,7 @@ import com.sun.javadoc.Type;
 
 /**
  * Note: This version is heavily modified by Matthias Braun<matthias.braun@kit.edu>
+ * Note: This version is even heavier modified by Lukas Böhm<suluke93@gmail.com>
  * 
  * This class provides a Java 2, <code>javadoc</code> Doclet which generates a
  * LaTeX2e document out of the java classes that it is used on.
@@ -40,6 +41,7 @@ import com.sun.javadoc.Type;
  * 
  * @author <a href="mailto:gregg.wonderly@pobox.com">Gregg Wonderly</a>
  * @author <a href="mailto:matthias.braun@kit.edu">Matthias Braun</a>
+ * @author <a href="mailto:suluke93@gmail.com">Lukas Böhm</a>
  */
 public class TexDoclet extends Doclet {
 	/** Writer for writing to output file */
@@ -47,6 +49,7 @@ public class TexDoclet extends Doclet {
 	private static String outfile = "docs.tex";
 	private static String refInlineName = "see ";
 	private static String refBlockName = "See also";
+	private static boolean silent = false;
 
 	/**
 	 * Returns how many arguments would be consumed if <code>option</code> is a
@@ -56,28 +59,29 @@ public class TexDoclet extends Doclet {
 	 *            the option to check
 	 */
 	public static int optionLength(String option) {
-		if (option.equals("-output"))
+		if (option.equals("-output")
+			|| option.equals("-classfilter") 
+			|| option.equals("-see")) {
 			return 2;
-		else if (option.equals("-classfilter"))
-			return 2;
-		else if (option.equals("-see"))
-			return 2;
-		else if (option.equals("-help")) {
-			System.err.println("TexDoclet Usage:");
-			System.err.println("-output <outfile>     Specifies the output file to write to.  If none");
-			System.err.println("                      specified, the default is docs.tex in the current");
-			System.err.println("                      directory.");
-			System.err.println("-see                  Specifies the text to use for references created from inline tags.");
-			System.err.println("                      For german javadocs use \"siehe \" for example.");
-			System.err.println("                      The default is \"see \".");
-			System.err.println("-See                  Specifies the text to use for references created from block tags.");
-			System.err.println("                      For german javadocs use \"Siehe auch\" for example.");
-			System.err.println("                      The default is \"See also\".");
-
+		}
+		if (option.equals("-help")) {
+			System.out.println("TexDoclet Usage:");
+			System.out.println("-output <outfile>     Specifies the output file to write to.  If none");
+			System.out.println("                      specified, the default is docs.tex in the current");
+			System.out.println("                      directory.");
+			System.out.println("-see                  Specifies the text to use for references created from inline tags.");
+			System.out.println("                      For german javadocs use \"siehe \" for example.");
+			System.out.println("                      The default is \"see \".");
+			System.out.println("-See                  Specifies the text to use for references created from block tags.");
+			System.out.println("                      For german javadocs use \"Siehe auch\" for example.");
+			System.out.println("                      The default is \"See also\".");
+			System.out.println("-silent               Have the doclet run in silent mode, i.e. all output will be suppressed");
 			return 1;
 		}
-
-		System.out.println("unknown option " + option);
+		if (option.equals("-silent")) {
+			return 1;
+		}
+		System.err.println("unknown option: " + option);
 		return Doclet.optionLength(option);
 	}
 
@@ -93,16 +97,28 @@ public class TexDoclet extends Doclet {
 		for (int i = 0; i < args.length; ++i) {
 			if (args[i][0].equals("-output")) {
 				outfile = args[i][1];
-			} else if (args[i][0].equals("-see")) {
-				refInlineName = args[i][1];
-			} else if (args[i][0].equals("-See")) {
-				refBlockName = args[i][1];
+				continue;
 			}
+			if (args[i][0].equals("-see")) {
+				refInlineName = args[i][1];
+				continue;
+			}
+			if (args[i][0].equals("-See")) {
+				refBlockName = args[i][1];
+				continue;
+			}
+			if (args[i][0].equals("-silent")) {
+				silent = true;
+				continue;
+			}
+			return false;
 		}
 		return true;
 	}
 
-	/** indicate that we can handle (most) 1.5 language features */
+	/** 
+	 * indicate that we can handle (most) Java 1.5 language features
+	 */
 	static public LanguageVersion languageVersion() {
 		return LanguageVersion.JAVA_1_5;
 	}
@@ -114,9 +130,9 @@ public class TexDoclet extends Doclet {
 	 *            the root of the starting document
 	 */
 	public static boolean start(RootDoc root) {
-		System.out.println("TexDoclet 4.0, Copyright 2009 - Matthias Braun");
-		System.out.println("based on TexDoclet v3.0, Copyright 2003 - Gregg Wonderly.");
-		System.out.println("http://texdoclet.dev.java.net - on the World Wide Web.");
+		println("TexDoclet 4.0, Copyright 2009 - Matthias Braun");
+		println("based on TexDoclet v3.0, Copyright 2003 - Gregg Wonderly.");
+		println("http://texdoclet.dev.java.net - on the World Wide Web.");
 
 		try {
 			/* Open output file and force an UTF-8 encoding */
@@ -132,7 +148,7 @@ public class TexDoclet extends Doclet {
 
 		for (PackageDoc pkg : packages) {
 
-			System.out.println("* Package: " + pkg.name());
+			println("* Package: " + pkg.name());
 
 			os.println("\\begin{texdocpackage}{" + HTMLToTex.convert(pkg.name()) + "}");
 			os.println("\\label{texdoclet:" + pkg.name() + "}");
@@ -164,10 +180,6 @@ public class TexDoclet extends Doclet {
 
 	private static void printComment(Tag t) {
 		printComment(t.inlineTags(), null);
-	}
-
-	private static void printComment(Tag t, MethodDoc md) {
-		printComment(t.inlineTags(), md);
 	}
 
 	private static void printComment(Tag[] tags, MethodDoc md) {
@@ -231,7 +243,7 @@ public class TexDoclet extends Doclet {
 	}
 
 	private static void printClass(ClassDoc cd) {
-		if (cd.tags("@excludeFromTex").length > 0) {
+		if (cd.tags("@texignore").length > 0) {
 			return;
 		}
 		
@@ -243,10 +255,37 @@ public class TexDoclet extends Doclet {
 		} else {
 			type = "class";
 		}
+		
+		String generalization = "";
+		Type s = cd.superclassType();
+		if (s != null 
+			&& !s.toString().equals("java.lang.Object")
+			&& !cd.isEnum()
+		) {
+			generalization = s.toString();
+		}
+		
+		String realizations = "";
+		Type[] itypes = cd.interfaceTypes();
+		if (itypes.length > 0) {
+			realizations += itypes[0].asClassDoc().toString();
+			for (int i = 1; i < itypes.length; i++) {
+				ClassDoc ic = itypes[i].asClassDoc();
+				realizations += ic.toString() + ", ";
+			}
+		}
 
-		os.println("\\begin{texdocclass}{" + type + "}{"
-				+ HTMLToTex.convert(cd.name()) + "}");
-
+		String classLine = "\\begin{texdocclass}"
+				+ "{" + type + "}"
+				+ "{" + HTMLToTex.convert(cd.name()) + "}";
+		if (!generalization.equals("")) {
+			classLine += "[" + HTMLToTex.convert(generalization) + "]";
+		}
+		if (!realizations.equals("")) {
+			classLine += "[" + HTMLToTex.convert(realizations) + "]";
+		}
+		os.println(classLine);
+			
 		os.println("\\label{texdoclet:" + cd.containingPackage().name() + "." + cd.name() + "}");
 		os.println("\\begin{texdocclassintro}");
 		printComment(cd);
@@ -480,5 +519,11 @@ public class TexDoclet extends Doclet {
 			tstring = type.typeName();
 		}
 		return tstring;
+	}
+	
+	private static void println(String s) {
+		if (!silent) {
+			System.out.println(s);
+		}
 	}
 }
