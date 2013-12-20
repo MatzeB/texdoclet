@@ -33,7 +33,13 @@
 		\subsection[#2]{\texttt{#1 \textbf{#2}
 			\IfNoValueTF{#3}
 			{}
-			{extends #3}
+			{% "extends" argument was given
+				% test, if the argument was empty or not
+				\ifx&#3&%
+				\else
+					extends #3
+				\fi
+			}
 			\IfNoValueTF{#4}
 			{}
 			{implements #4}

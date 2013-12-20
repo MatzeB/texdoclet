@@ -6,7 +6,6 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Stack;
 
-import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 
 /**
@@ -58,12 +57,9 @@ public class HTMLToTex {
 	private String str;
 	private int pos;
 	private StringBuffer ret;
-	private String block = "";
 	private String refurl = "";
 	private String refimg = "";
-	private boolean collectBlock;
 	private int chapt = 0;
-	private int textdepth = 0;
 	private int verbat = 0;
 	private Stack<TableInfo> tblstk = new Stack<TableInfo>();
 	private Hashtable<String, String> colors = new Hashtable<String, String>(10);
@@ -166,7 +162,6 @@ public class HTMLToTex {
 		this.str = input;
 		ret = new StringBuffer();
 
-		++textdepth;
 		for (pos = 0; pos < str.length(); ++pos) {
 			char c = str.charAt(pos);
 			switch (c) {
@@ -505,8 +500,6 @@ public class HTMLToTex {
 				break;
 			}
 		}
-		--textdepth;
-
 		/* leave all contexts */
 		leave("");
 

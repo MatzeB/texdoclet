@@ -50,6 +50,7 @@ public class TexDoclet extends Doclet {
 	private static String refInlineName = "see ";
 	private static String refBlockName = "See also";
 	private static boolean silent = false;
+	private static String excludeTag = "@texignore";
 
 	/**
 	 * Returns how many arguments would be consumed if <code>option</code> is a
@@ -75,7 +76,7 @@ public class TexDoclet extends Doclet {
 			System.out.println("-See                  Specifies the text to use for references created from block tags.");
 			System.out.println("                      For german javadocs use \"Siehe auch\" for example.");
 			System.out.println("                      The default is \"See also\".");
-			System.out.println("-silent               Have the doclet run in silent mode, i.e. all output will be suppressed");
+			System.out.println("-silent               Have the doclet run in silent mode, i.e. all output will be suppressed, except warnings");
 			return 1;
 		}
 		if (option.equals("-silent")) {
@@ -87,6 +88,7 @@ public class TexDoclet extends Doclet {
 
 	/**
 	 * Checks the passed options and their arguments for validity.
+	 * Used to already configure the doclet according to the options passed.
 	 * 
 	 * @param args
 	 *            the arguments to check
@@ -111,7 +113,6 @@ public class TexDoclet extends Doclet {
 				silent = true;
 				continue;
 			}
-			return false;
 		}
 		return true;
 	}
@@ -243,10 +244,11 @@ public class TexDoclet extends Doclet {
 	}
 
 	private static void printClass(ClassDoc cd) {
-		if (cd.tags("@texignore").length > 0) {
+		if (cd.tags(excludeTag).length > 0) {
 			return;
 		}
 		
+		// Determine type: class or interface
 		String type;
 		if (cd.isInterface()) {
 			type = "interface";
@@ -256,34 +258,33 @@ public class TexDoclet extends Doclet {
 			type = "class";
 		}
 		
-		String generalization = "";
+		// This string will hold the class' section heading
+		String classLine = "\\begin{texdocclass}"
+				+ "{" + type + "}"
+				+ "{" + HTMLToTex.convert(cd.name()) + "}";
+		
 		Type s = cd.superclassType();
 		if (s != null 
 			&& !s.toString().equals("java.lang.Object")
 			&& !cd.isEnum()
 		) {
-			generalization = s.toString();
+			String generalization = s.toString();
+			classLine += "[" + HTMLToTex.convert(generalization) + "]";
+		} else if (!cd.isInterface()) {
+			// HACKY: if cd is an interface, omit the empty brackets for the "extends" field, for it is used for extended interfaces
+			classLine += "[]";
 		}
 		
-		String realizations = "";
 		Type[] itypes = cd.interfaceTypes();
 		if (itypes.length > 0) {
-			realizations += itypes[0].asClassDoc().toString();
+			String realizations = itypes[0].asClassDoc().toString();
 			for (int i = 1; i < itypes.length; i++) {
 				ClassDoc ic = itypes[i].asClassDoc();
-				realizations += ic.toString() + ", ";
+				realizations +=  ", " + ic.toString();
 			}
-		}
-
-		String classLine = "\\begin{texdocclass}"
-				+ "{" + type + "}"
-				+ "{" + HTMLToTex.convert(cd.name()) + "}";
-		if (!generalization.equals("")) {
-			classLine += "[" + HTMLToTex.convert(generalization) + "]";
-		}
-		if (!realizations.equals("")) {
 			classLine += "[" + HTMLToTex.convert(realizations) + "]";
 		}
+
 		os.println(classLine);
 			
 		os.println("\\label{texdoclet:" + cd.containingPackage().name() + "." + cd.name() + "}");
