@@ -8,7 +8,7 @@ applied to by [Matthias Braun](https://github.com/MatzeB). See his github projec
 
 My fork adapts the doclet to meet the requirements of our project [lambda-alligatoren](https://github.com/vincent23/lambda-alligatoren).
 In detail, those are:
-* @excludeFromTex tag support
+* @texexclude tag support
 * modify the original "preamble.tex" to become an "\\input"-able "docletcommands.tex" (thanks to [@vincent23](https://github.com/vincent23))
 * fix a surplus "}" in HTMLtoTex which broke ordered lists
 
