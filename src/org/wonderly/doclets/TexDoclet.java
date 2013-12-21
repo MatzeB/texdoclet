@@ -519,6 +519,7 @@ public class TexDoclet extends Doclet {
 		} else {
 			tstring = type.typeName();
 		}
+		tstring += type.dimension();
 		return tstring;
 	}
 	
