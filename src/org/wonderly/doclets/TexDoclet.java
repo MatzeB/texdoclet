@@ -201,7 +201,7 @@ public class TexDoclet extends Doclet {
 					os.print(HTMLToTex.convert(t.text(), md));
 				} else {
 					os.print("\\texdocinheritdoc{");
-					os.print(overridden.containingClass().qualifiedName());
+					os.print(overridden.containingClass().qualifiedName().replace(".", "\\-."));
 					os.print("}{");
 					printComment(overridden.inlineTags(), overridden);
 					os.print("}");
