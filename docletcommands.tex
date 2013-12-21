@@ -1,4 +1,5 @@
-%\usepackage{xparse}
+\usepackage{xparse}% for passing multiple arguments
+\usepackage{needspace}% for preventing classe to begin within the lower 7cm of a page
 
 % Initially we're not in a package or class
 \def\packagename{}
@@ -7,8 +8,8 @@
 \markboth{\protect\packagename{} -- \protect\classname{}}{\protect\packagename{} -- \protect\classname{}}
 
 % ---------------------------------------------------------------------------
-% TexDoc macros start - everything below this point should be copied to your
-% own document and adapted to your style/language if needed
+% TexDoc macros start - everything below this point can be
+% adapted to your style/language if needed
 % ---------------------------------------------------------------------------
 
 % Environment used to simulate html <p> </p>
@@ -26,7 +27,6 @@
 % Argument 2: the name of the class/interface
 % Argument 3 [opt.]: the name of the superclass
 % Argument 4 [opt.]: the name of the realized interfaces
-% TODO: Probably easier implementation with xparse instead of pgfkeys. Would make substitution ; <-> , unnecessary
 \NewDocumentEnvironment{texdocclass}{ m m o o }{%
 		\gdef\classname{#2}
 		\subsection[#2]{\texttt{#1 \textbf{#2}
@@ -43,8 +43,7 @@
 			{}
 			{implements #4}
 		}}
-% }{\newpage{}}
-}{}% removed \newpage
+}{\needspace{7cm}}
 
 % Environment for class description
 \newenvironment{texdocclassintro}{
