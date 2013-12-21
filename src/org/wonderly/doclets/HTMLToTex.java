@@ -172,6 +172,9 @@ public class HTMLToTex {
 					ret.append(' ');
 				}
 				break;
+			case '"':
+				ret.append("\"'");
+				break;
 			case '_':
 			case '%':
 			case '$':
