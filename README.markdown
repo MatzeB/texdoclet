@@ -27,7 +27,8 @@ Features
   easily adapt to your own style/document without the need to touch the tools
   output.
 * Classes not intended to be part of the generated tex document can be excluded with a dedicated "texignore" tag.
-* Shows generalization and realizations
+* Shows generalization and realizations ("extends" and "implements")
+* Shows dimensions of types, like in "String[][]".
 * Has doclet specific tex commands outsourced to allow easy integration into existing documents.
 
 Commandline Options
@@ -46,15 +47,15 @@ Usage
 
 	javadoc -docletpath texdoclet.jar -doclet org.wonderly.doclets.TexDoclet my.cool.package
 
-   This should produce a file docs.tex
+   This should produce a file docs.tex. See "man javadoc" and the section above for additional command line arguments.
 
-2. You may test the generated output by copying preamble.tex into the current
-   directory and compiling it with pdflatex (preamble.tex includes docs.tex)
+2. You will need to also input "docletcommands.tex" to the preamble of your main document, otherwise
+   you will get a lot of errors due to missing commands.
 
-3. Copy the definitions inside preamble.tex into the preamble of your own latex
-   document. Adapt the macros to your style and language needs.
-   Use \input{docs.tex} inside your document to include the generated
-   documentation.
+3. \\Input the generated "docs.tex" (or the file with the name you specified via -output) at any place within 
+   your document environment.
+4. If you like headers, put \\pagestyle{myheadings} in front of the \\input command you just entered.
+   You can turn off the headers again by re-executing \\pagestyle{plain} or whichever pagestyle you were using before.
 
 Original Author/Contact
 --------------
