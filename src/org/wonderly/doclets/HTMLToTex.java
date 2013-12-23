@@ -6,7 +6,6 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Stack;
 
-import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 
 /**
@@ -58,12 +57,9 @@ public class HTMLToTex {
 	private String str;
 	private int pos;
 	private StringBuffer ret;
-	private String block = "";
 	private String refurl = "";
 	private String refimg = "";
-	private boolean collectBlock;
 	private int chapt = 0;
-	private int textdepth = 0;
 	private int verbat = 0;
 	private Stack<TableInfo> tblstk = new Stack<TableInfo>();
 	private Hashtable<String, String> colors = new Hashtable<String, String>(10);
@@ -166,7 +162,6 @@ public class HTMLToTex {
 		this.str = input;
 		ret = new StringBuffer();
 
-		++textdepth;
 		for (pos = 0; pos < str.length(); ++pos) {
 			char c = str.charAt(pos);
 			switch (c) {
@@ -176,6 +171,9 @@ public class HTMLToTex {
 				} else {
 					ret.append(' ');
 				}
+				break;
+			case '"':
+				ret.append("\"'");
 				break;
 			case '_':
 			case '%':
@@ -232,7 +230,7 @@ public class HTMLToTex {
 					leave("</center>");
 				} else if (startsWith("<meta")) {
 					Properties p = new Properties();
-					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
+					int idx = HTMLToTex.getTagAttrs(str, p, pos + 5);
 					pos = idx;
 				} else if (match("<title>")) {
 					ret.append("\\chapter{");
@@ -240,19 +238,19 @@ public class HTMLToTex {
 					ret.append("}");
 				} else if (startsWith("<form")) {
 					Properties p = new Properties();
-					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
+					int idx = HTMLToTex.getTagAttrs(str, p, pos + 5);
 					pos = idx;
 				} else if (match("</form>")) {
 					/* nothing */
 				} else if (startsWith("<input")) {
 					Properties p = new Properties();
-					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
+					int idx = HTMLToTex.getTagAttrs(str, p, pos + 6);
 					pos = idx;
 				} else if (match("</input>")) {
 					/* nothing */
 				} else if (startsWith("<body")) {
 					Properties p = new Properties();
-					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
+					int idx = HTMLToTex.getTagAttrs(str, p, pos + 5);
 					pos = idx;
 				} else if (match("</body>")) {
 					/* nothing */
@@ -330,7 +328,7 @@ public class HTMLToTex {
 					}
 				} else if (startsWith("<a")) {
 					Properties p = new Properties();
-					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
+					int idx = HTMLToTex.getTagAttrs(str, p, pos + 2);
 					refurl = p.getProperty("href");
 					String refname = p.getProperty("href");
 					pos = idx;
@@ -360,7 +358,7 @@ public class HTMLToTex {
 				} else if (match("</dl>")) {
 					ret.append("\n\\end{itemize}\n");
 				} else if (match("</ol>")) {
-					ret.append("}\n\\end{enumerate}");
+					ret.append("\n\\end{enumerate}");
 				} else if (startsWith("<ul")) {
 					Properties p = new Properties();
 					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
@@ -387,11 +385,6 @@ public class HTMLToTex {
 					int idx = getTagAttrs(str, p, pos + 3);
 					pos = idx;
 					tblinfo.startRow(ret, p);
-				} else if (startsWith("<tr")) {
-					Properties p = new Properties();
-					int idx = getTagAttrs(str, p, pos + 3);
-					pos = idx;
-					tblinfo.startCol(ret, p);
 				} else if (startsWith("<th")) {
 					Properties p = new Properties();
 					int idx = getTagAttrs(str, p, pos + 3);
@@ -505,8 +498,6 @@ public class HTMLToTex {
 				break;
 			}
 		}
-		--textdepth;
-
 		/* leave all contexts */
 		leave("");
 

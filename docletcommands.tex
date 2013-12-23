@@ -1,24 +1,6 @@
-% This is an example preamble for texdoclet generated output.
-% Used like this it produces a standalone document. However it should be easy
-% to copy these definitions into your own document and use \input{docs.tex}
-% where you want your texdoc documentation.
+\usepackage{xparse}% for passing multiple arguments
+\usepackage{needspace}% for preventing classe to begin within the lower 7cm of a page
 
-% The following is an example to put packagename and class into the page
-% headings.
-\documentclass[a4paper,11pt,parskip=half]{scrbook}
-
-% Make sure you use at least the following packages
-\usepackage{color}
-% The texdoclet output is in UTF-8. I strongly recommend writing the latex
-% source in UTF-8 encoding anyway...
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-
-% The following packages are not striclty necessary to get texdoclet working
-\usepackage{hyperref}
-
-\pagestyle{myheadings}
 % Initially we're not in a package or class
 \def\packagename{}
 \def\classname{}
@@ -26,8 +8,8 @@
 \markboth{\protect\packagename{} -- \protect\classname{}}{\protect\packagename{} -- \protect\classname{}}
 
 % ---------------------------------------------------------------------------
-% TexDoc macros start - everything below this point should be copied to your
-% own document and adapted to your style/language if needed
+% TexDoc macros start - everything below this point can be
+% adapted to your style/language if needed
 % ---------------------------------------------------------------------------
 
 % Environment used to simulate html <p> </p>
@@ -36,64 +18,79 @@
 }
 % Environment for packages
 \newenvironment{texdocpackage}[1]{%
-	\newpage{}\gdef\packagename{#1}\chapter{Package \texttt{#1}}
-	\rule{\hsize}{.7mm}
-}{}
+        \gdef\packagename{#1}\section{Package \texttt{#1}}
+        \rule{\hsize}{.7mm}
+}{\newpage{}}
 
 % Environment for classes, interfaces
 % Argument 1: "class" or "interface"
 % Argument 2: the name of the class/interface
-\newenvironment{texdocclass}[2]{%
-	\gdef\classname{#2}
-	\section{\texttt{#1 \textbf{#2}}}
-}{\newpage{}}
+% Argument 3 [opt.]: the name of the superclass
+% Argument 4 [opt.]: the name of the realized interfaces
+\NewDocumentEnvironment{texdocclass}{ m m o o }{%
+		\gdef\classname{#2}
+		\subsection[#2]{\texttt{#1 \textbf{#2}
+			\IfNoValueTF{#3}
+			{}
+			{% "extends" argument was given
+				% test, if the argument was empty or not
+				\ifx&#3&%
+				\else
+					extends #3
+				\fi
+			}
+			\IfNoValueTF{#4}
+			{}
+			{implements #4}
+		}}
+}{\needspace{7cm}}
 
 % Environment for class description
 \newenvironment{texdocclassintro}{
-	\subsection*{Description}
+        \subsubsection*{Description}
 }{
 }
 
 % Environment around class fields
 \newenvironment{texdocclassfields}{%
-	\subsection*{Attributes}
-	\begin{itemize}
+        \subsubsection*{Attributes}
+        \begin{itemize}
 }{%
-	\end{itemize}
+        \end{itemize}
 }
 
 % Environment around class methods
 \newenvironment{texdocclassmethods}{%
-	\subsection*{Methods}
-	\begin{itemize}
+        \subsubsection*{Methods}
+        \begin{itemize}
 }{%
-	\end{itemize}
+        \end{itemize}
 }
 
 % Environment around class Constructors
 \newenvironment{texdocclassconstructors}{%
-	\subsection*{Constructors}
-	\begin{itemize}
+        \subsubsection*{Constructors}
+        \begin{itemize}
 }{%
-	\end{itemize}
+        \end{itemize}
 }
 
 % Environment around enum constants
 \newenvironment{texdocenums}{%
-	\subsection*{Enum Constants}
-	\begin{itemize}
+        \subsubsection*{Enum Constants}
+        \begin{itemize}
 }{%
-	\end{itemize}
+        \end{itemize}
 }
 
 % Environment around "See also"-Blocks (\texdocsee invocations)
 %  Argument 1: Text preceding the references
 \newenvironment{texdocsees}[1]{
-	
-	\textbf{#1:}
-	\begin{itemize}
+        
+        \textbf{#1:}
+        \begin{itemize}
 }{%
-	\end{itemize}
+        \end{itemize}
 }
 % Formats a single field
 %  Argument 1: modifiers
@@ -127,7 +124,7 @@
 % Inserted when @inheritdoc is used
 %  Argument 1: Class where the documentation was inherited from
 %  Argument 2: Documentation
-\newcommand{\texdocinheritdoc}[2]{#2 (\textit{documentation inherited from \texttt{#1})}}
+\newcommand{\texdocinheritdoc}[2]{#2 \\(\textit{documentation inherited from \texttt{#1})}}
 
 % Formats a single see-BlockTag
 %  Argument 1: text
@@ -136,10 +133,10 @@
 
 % Environment around \texdocparameter invocations
 \newenvironment{texdocparameters}{%
-	\minisec{Parameters}
-	\begin{tabular}{ll}
+        \minisec{Parameters}
+        \begin{tabular}{ll}
 }{%
-	\end{tabular}
+        \end{tabular}
 }
 
 % Environment around \texdocthrow invocations
@@ -176,14 +173,3 @@
 \relax\else
 {$($ in \ref{#1}, page \pageref{#1}$)$}
 \fi}
-
-% ---------------------------------------------------------------------------
-% TexDoc macros end
-% ---------------------------------------------------------------------------
-
-\begin{document}
-
-	\tableofcontents
-	\input{docs.tex}
-
-\end{document}
