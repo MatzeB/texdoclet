@@ -26,6 +26,7 @@ import com.sun.javadoc.SeeTag;
 import com.sun.javadoc.Tag;
 import com.sun.javadoc.ThrowsTag;
 import com.sun.javadoc.Type;
+import com.sun.javadoc.TypeVariable;
 
 /**
  * Note: This version is heavily modified by Matthias Braun<matthias.braun@kit.edu>
@@ -146,6 +147,11 @@ public class TexDoclet extends Doclet {
 
 		ClassDoc[] classes = root.specifiedClasses();
 		PackageDoc[] packages = root.specifiedPackages();
+		Arrays.sort(packages, new Comparator<PackageDoc>() {
+			public int compare(PackageDoc o1, PackageDoc o2) {
+				return o1.name().compareToIgnoreCase(o2.name());
+			}
+		});
 
 		for (PackageDoc pkg : packages) {
 
@@ -258,11 +264,14 @@ public class TexDoclet extends Doclet {
 			type = "class";
 		}
 		
-		// This string will hold the class' section heading
+		String name = formatClassDoc(cd);
+		
+		// this string will hold the class' section heading
 		String classLine = "\\begin{texdocclass}"
 				+ "{" + type + "}"
-				+ "{" + HTMLToTex.convert(cd.name()) + "}";
+				+ "{" + texEscape(name) + "}";
 		
+		// print "extends" fields
 		Type s = cd.superclassType();
 		if (s != null 
 			&& !s.toString().equals("java.lang.Object")
@@ -275,6 +284,7 @@ public class TexDoclet extends Doclet {
 			classLine += "[]";
 		}
 		
+		// print "implements" fields
 		Type[] itypes = cd.interfaceTypes();
 		if (itypes.length > 0) {
 			String realizations = itypes[0].asClassDoc().toString();
@@ -366,9 +376,9 @@ public class TexDoclet extends Doclet {
 
 		for (FieldDoc f : fields) {
 			os.print("\\texdocfield");
-			os.print("{" + HTMLToTex.convert(f.modifiers()) + "}");
-			os.print("{" + HTMLToTex.convert(typeToString(f.type())) + "}");
-			os.print("{" + HTMLToTex.convert(f.name()) + "}");
+			os.print("{" + texEscape(f.modifiers()) + "}");
+			os.print("{" + texEscape(typeToString(f.type())) + "}");
+			os.print("{" + texEscape(f.name()) + "}");
 			os.print("{");
 			printComment(f);
 			os.print("}");
@@ -426,7 +436,7 @@ public class TexDoclet extends Doclet {
 			os.print("{" + HTMLToTex.convert(member.modifiers()) + "}");
 			if (member instanceof MethodDoc) {
 				MethodDoc methodDoc = (MethodDoc) member;
-				os.print("{" + HTMLToTex.convert(typeToString(methodDoc.returnType())) + "}");
+				os.print("{" + texEscape(typeToString(methodDoc.returnType())) + "}");
 			}
 			os.print("{" + HTMLToTex.convert(member.name()) + "}");
 			os.print("{" + HTMLToTex.convert(formatParameters(member)) + "}");
@@ -502,6 +512,48 @@ public class TexDoclet extends Doclet {
 
 		return res.toString();
 	}
+	
+	/**
+	 * Builds a string with the name and the parameter types of a given ClassDoc.
+	 * 
+	 * @param cd the ClassDoc whoes name is to be formatted
+	 * @return a String like "List<String>" in case of a string list
+	 */
+	private static String formatClassDoc(ClassDoc cd) {
+		String name = cd.name();
+		TypeVariable[] parameters = cd.typeParameters();
+		if (parameters.length > 0) {
+			name += "<" + formatTypeVariable(parameters[0]);
+			for (int i = 1; i < parameters.length; i++) {
+				TypeVariable t = parameters[i];
+				name += ", " + formatTypeVariable(t);
+			}
+			name +=">";
+		}
+		
+		return name;
+	}
+	
+	/**
+	 * Formats a given type variable an returns its string representation.
+	 * E.g. "? extends String" for an anonymous TypeVariable that is derived from String
+	 * 
+	 * @param t the type variable to be formatted
+	 * @return the formatted string representation
+	 */
+	private static String formatTypeVariable(TypeVariable t) {
+		String result = t.typeName();
+		
+		Type[] bounds = t.bounds();
+		if (bounds.length > 0) {
+			result += " extends " + bounds[0].toString();
+			for(int i = 1; i < bounds.length; i++) {
+				result += ", " + bounds[i].toString();
+			}
+		}
+		
+		return result;
+	}
 
 	/**
 	 * Converts a DocLet type back to java syntax
@@ -520,7 +572,46 @@ public class TexDoclet extends Doclet {
 			tstring = type.typeName();
 		}
 		tstring += type.dimension();
+
 		return tstring;
+	}
+	
+	private static String texEscape(String s) {
+		StringBuilder ret = new StringBuilder();
+		for(int i = 0; i < s.length(); i++) {
+			char c = s.charAt(i);
+			switch (c) {
+				case '"':
+					ret.append("\"'");
+					break;
+				case '_':
+				case '%':
+				case '$':
+				case '#':
+					ret.append('\\');
+					ret.append((char) c);
+					break;
+				case '^': /* { */
+					ret.append("$\\wedge$");
+					break;
+				case '}':
+					ret.append("$\\}$");
+					break;
+				case '{':
+					ret.append("$\\{$");
+					break;
+				case '<':
+					ret.append("\\textless{}");
+					break;
+				case '>':
+					ret.append("\\textgreater{}");
+					break;
+				default:
+					ret.append((char) c);
+					break;
+			}
+		}
+		return ret.toString();
 	}
 	
 	private static void println(String s) {
