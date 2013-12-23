@@ -230,7 +230,7 @@ public class HTMLToTex {
 					leave("</center>");
 				} else if (startsWith("<meta")) {
 					Properties p = new Properties();
-					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
+					int idx = HTMLToTex.getTagAttrs(str, p, pos + 5);
 					pos = idx;
 				} else if (match("<title>")) {
 					ret.append("\\chapter{");
@@ -238,19 +238,19 @@ public class HTMLToTex {
 					ret.append("}");
 				} else if (startsWith("<form")) {
 					Properties p = new Properties();
-					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
+					int idx = HTMLToTex.getTagAttrs(str, p, pos + 5);
 					pos = idx;
 				} else if (match("</form>")) {
 					/* nothing */
 				} else if (startsWith("<input")) {
 					Properties p = new Properties();
-					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
+					int idx = HTMLToTex.getTagAttrs(str, p, pos + 6);
 					pos = idx;
 				} else if (match("</input>")) {
 					/* nothing */
 				} else if (startsWith("<body")) {
 					Properties p = new Properties();
-					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
+					int idx = HTMLToTex.getTagAttrs(str, p, pos + 5);
 					pos = idx;
 				} else if (match("</body>")) {
 					/* nothing */
@@ -328,7 +328,7 @@ public class HTMLToTex {
 					}
 				} else if (startsWith("<a")) {
 					Properties p = new Properties();
-					int idx = HTMLToTex.getTagAttrs(str, p, pos + 3);
+					int idx = HTMLToTex.getTagAttrs(str, p, pos + 2);
 					refurl = p.getProperty("href");
 					String refname = p.getProperty("href");
 					pos = idx;
@@ -385,11 +385,6 @@ public class HTMLToTex {
 					int idx = getTagAttrs(str, p, pos + 3);
 					pos = idx;
 					tblinfo.startRow(ret, p);
-				} else if (startsWith("<tr")) {
-					Properties p = new Properties();
-					int idx = getTagAttrs(str, p, pos + 3);
-					pos = idx;
-					tblinfo.startCol(ret, p);
 				} else if (startsWith("<th")) {
 					Properties p = new Properties();
 					int idx = getTagAttrs(str, p, pos + 3);
