@@ -264,11 +264,14 @@ public class TexDoclet extends Doclet {
 			type = "class";
 		}
 		
+		String modifiers = cd.modifiers();
+		
 		String name = formatClassDoc(cd);
 		
 		// this string will hold the class' section heading
 		String classLine = "\\begin{texdocclass}"
-				+ "{" + type + "}"
+				// TODO hacky, uses same tex macro argument as type
+				+ "{" + modifiers + " " + type + "}"
 				+ "{" + texEscape(name) + "}";
 		
 		// print "extends" fields
